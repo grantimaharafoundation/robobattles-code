@@ -475,7 +475,7 @@ const Editor: React.FunctionComponent = () => {
             fontSize: 18,
             minimap: { enabled: false },
             contextmenu: false,
-            rulers: [80],
+            rulers: [],
             lineNumbersMinChars: 4,
             wordBasedSuggestions: 'off',
             selectionClipboard: false, // don't copy selection on Linux
