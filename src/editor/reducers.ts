@@ -52,3 +52,7 @@ export default combineReducers({
     activeFileUuid,
     openFileUuids,
 });
+
+export const selectCurrentProgramUuid = (state: {
+    editor: { activeFileUuid: UUID | null };
+}): UUID | null => state.editor.activeFileUuid;

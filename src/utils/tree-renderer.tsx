@@ -29,6 +29,8 @@ export type TreeItemData = {
     /** Optional icon. Element must include `className={Classes.TREE_NODE_ICON}`! */
     readonly icon?: MaybeElement;
     readonly secondaryLabel?: string | MaybeElement;
+    /** Optional custom class name for the tree item's li element */
+    readonly customClassName?: string;
 };
 
 /**
@@ -50,9 +52,9 @@ export type RenderProps<T extends keyof RendererFuncs> = Parameters<
     RendererFuncs[T]
 >[0];
 
-const TreeContainer: React.FunctionComponent<RenderProps<'renderTreeContainer'>> = (
-    props,
-) => {
+const TreeContainer = (
+    props: RenderProps<'renderTreeContainer'>,
+): React.ReactElement | null => {
     return (
         <div
             className={cx(Classes.TREE, Classes.FOCUS_STYLE_MANAGER_IGNORE)}
@@ -63,9 +65,9 @@ const TreeContainer: React.FunctionComponent<RenderProps<'renderTreeContainer'>>
     );
 };
 
-const ItemsContainer: React.FunctionComponent<RenderProps<'renderTreeContainer'>> = (
-    props,
-) => (
+const ItemsContainer = (
+    props: RenderProps<'renderTreeContainer'>,
+): React.ReactElement | null => (
     <ul
         className={cx(Classes.TREE_NODE_LIST, Classes.TREE_ROOT)}
         {...props.containerProps}
@@ -77,7 +79,7 @@ const ItemsContainer: React.FunctionComponent<RenderProps<'renderTreeContainer'>
     </ul>
 );
 
-const Item: React.FunctionComponent<RenderProps<'renderItem'>> = (props) => {
+const Item = (props: RenderProps<'renderItem'>): React.ReactElement | null => {
     const {
         value: isHover,
         setTrue: setIsHoverTrue,
@@ -93,6 +95,7 @@ const Item: React.FunctionComponent<RenderProps<'renderItem'>> = (props) => {
                     props.context.isExpanded && Classes.TREE_NODE_EXPANDED,
                     (props.context.isSelected || props.context.isDraggingOver) &&
                         Classes.TREE_NODE_SELECTED,
+                    props.item.data.customClassName,
                 )}
                 onMouseDown={(e) => e.stopPropagation()}
                 onMouseEnter={setIsHoverTrue}
@@ -126,7 +129,9 @@ const Item: React.FunctionComponent<RenderProps<'renderItem'>> = (props) => {
     );
 };
 
-const ItemArrow: React.FunctionComponent<RenderProps<'renderItemArrow'>> = (props) => (
+const ItemArrow = (
+    props: RenderProps<'renderItemArrow'>,
+): React.ReactElement | null => (
     <Icon
         icon={<ChevronRight />}
         className={cx(
@@ -142,11 +147,11 @@ const ItemArrow: React.FunctionComponent<RenderProps<'renderItemArrow'>> = (prop
     />
 );
 
-const ItemTitle: React.FunctionComponent<RenderProps<'renderItemTitle'>> = ({
+const ItemTitle = ({
     title,
     context,
     info,
-}) => {
+}: RenderProps<'renderItemTitle'>): string | React.ReactElement | null => {
     if (!info.isSearching || !context.isSearchMatching || !info.search) {
         return <span className={Classes.TREE_NODE_LABEL}>{title}</span>;
     } else {
@@ -167,9 +172,10 @@ const ItemTitle: React.FunctionComponent<RenderProps<'renderItemTitle'>> = ({
     }
 };
 
-const DragBetweenLine: React.FunctionComponent<
-    RenderProps<'renderDragBetweenLine'>
-> = ({ draggingPosition, lineProps }) => (
+const DragBetweenLine = ({
+    draggingPosition,
+    lineProps,
+}: RenderProps<'renderDragBetweenLine'>): React.ReactElement | null => (
     <div
         {...lineProps}
         style={{
@@ -190,9 +196,9 @@ const DragBetweenLine: React.FunctionComponent<
     />
 );
 
-const RenameInput: React.FunctionComponent<RenderProps<'renderRenameInput'>> = (
-    props,
-) => (
+const RenameInput = (
+    props: RenderProps<'renderRenameInput'>,
+): React.ReactElement | null => (
     <form {...props.formProps} style={{ display: 'contents' }}>
         <span className={Classes.TREE_NODE_LABEL}>
             <input
@@ -214,9 +220,9 @@ const RenameInput: React.FunctionComponent<RenderProps<'renderRenameInput'>> = (
     </form>
 );
 
-const SearchInput: React.FunctionComponent<RenderProps<'renderSearchInput'>> = (
-    props,
-) => {
+const SearchInput = (
+    props: RenderProps<'renderSearchInput'>,
+): React.ReactElement | null => {
     const { ref, defaultValue, value, ...inputProps } = props.inputProps;
 
     assert(typeof ref !== 'string', 'cannot be a legacy ref');

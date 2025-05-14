@@ -43,11 +43,12 @@ import {
     useTree,
     useTreeEnvironment,
 } from 'react-complex-tree';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { legoRegisteredTrademark } from '../app/constants';
 import { Button as AppComponentButton } from '../components/Button'; // Import custom Button
 import { Toolbar } from '../components/toolbar/Toolbar';
 import { useToolbarItemFocus } from '../components/toolbar/aria';
+import { selectCurrentProgramUuid } from '../editor/reducers';
 import { UUID } from '../fileStorage';
 import { useFileStorageMetadata } from '../fileStorage/hooks';
 import { firmwareInstallPybricks } from '../firmware/actions';
@@ -378,6 +379,7 @@ const TreeContainer = (
 const FileTree: React.FunctionComponent = () => {
     const [focusedItem, setFocusedItem] = useState<TreeItemIndex>();
     const files = useFileStorageMetadata();
+    const currentProgramUuid = useSelector(selectCurrentProgramUuid);
     const liveDescriptors = useLiveDescriptors();
 
     const rootItemIndex = 'root';
@@ -390,6 +392,10 @@ const FileTree: React.FunctionComponent = () => {
         return files.reduce<Record<TreeItemIndex, FileTreeItem>>(
             (obj, file) => {
                 const index = file.uuid;
+                const customClassName =
+                    index === currentProgramUuid
+                        ? 'pb-explorer-file-tree-item-active'
+                        : undefined;
 
                 obj[index] = {
                     index,
@@ -401,6 +407,7 @@ const FileTree: React.FunctionComponent = () => {
                                 {(item) => <FileActionButtonGroup item={item} />}
                             </TreeItemContext.Consumer>
                         ),
+                        customClassName,
                     },
                 };
 
@@ -415,7 +422,7 @@ const FileTree: React.FunctionComponent = () => {
                 },
             },
         );
-    }, [files]);
+    }, [files, currentProgramUuid]);
 
     const getItemTitle = useCallback((item: FileTreeItem) => item.data.fileName, []);
 

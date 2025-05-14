@@ -32,5 +32,18 @@
         &-action-toolbar {
             display: inline-flex;
         }
+
+        // Style for the active file item
+        &-item-active {
+            // Targets the <li> element directly
+            & > .#{bp.$ns}-tree-node-content {
+                background-color: rgba(bp.$blue3, 0.15); // Use a blueprint color with some transparency
+            }
+
+            // Targets the label span inside the content
+            & .#{bp.$ns}-tree-node-label {
+                font-weight: bold;
+            }
+        }
     }
 }
