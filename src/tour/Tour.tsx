@@ -119,7 +119,7 @@ const Tour: React.FunctionComponent = () => {
     const [selectedActivity, setSelectedActivity] = useActivitiesSelectedActivity();
     const [showOnStartup, setShowOnStartup] = useLocalStorage(
         'tour.showOnStartup',
-        true,
+        false,
     );
     const [stepIndex, setStepIndex] = useState(0);
     const { isRunning } = useSelector((s) => s.tour);
