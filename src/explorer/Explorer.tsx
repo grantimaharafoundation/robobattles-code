@@ -5,16 +5,18 @@
 
 import './explorer.scss';
 import {
-    Button,
+    Button as BlueprintButton, // Moved here
     ButtonGroup,
     Classes,
     Divider,
+    //FormGroup,
     HotkeyConfig,
     useHotkeys,
 } from '@blueprintjs/core';
 import {
-    Archive,
+    //Archive,
     Document,
+    Download, // Added for firmware buttons
     Duplicate,
     Edit,
     Export,
@@ -29,6 +31,7 @@ import React, {
     useRef,
     useState,
 } from 'react';
+// Removed line: import { Button as BlueprintButton } from '@blueprintjs/core';
 import { useId } from 'react-aria';
 import {
     ControlledTreeEnvironment,
@@ -41,10 +44,15 @@ import {
     useTreeEnvironment,
 } from 'react-complex-tree';
 import { useDispatch } from 'react-redux';
+import { legoRegisteredTrademark } from '../app/constants';
+import { Button as AppComponentButton } from '../components/Button'; // Import custom Button
 import { Toolbar } from '../components/toolbar/Toolbar';
 import { useToolbarItemFocus } from '../components/toolbar/aria';
 import { UUID } from '../fileStorage';
 import { useFileStorageMetadata } from '../fileStorage/hooks';
+import { firmwareInstallPybricks } from '../firmware/actions';
+import { firmwareRestoreOfficialDialogShow } from '../firmware/restoreOfficialDialog/actions';
+import { useI18n as useSettingsI18n } from '../settings/i18n';
 import { isMacOS } from '../utils/os';
 import {
     RenderProps,
@@ -53,7 +61,7 @@ import {
     renderers,
 } from '../utils/tree-renderer';
 import {
-    explorerArchiveAllFiles,
+    //explorerArchiveAllFiles,
     explorerCreateNewFile,
     explorerDeleteFile,
     explorerDuplicateFile,
@@ -99,7 +107,7 @@ const ActionButton: React.FunctionComponent<ActionButtonProps> = ({
     const { toolbarItemFocusProps, excludeFromTabOrder } = useToolbarItemFocus({ id });
 
     return (
-        <Button
+        <BlueprintButton // Use aliased BlueprintButton for existing action buttons
             id={id}
             icon={icon}
             title={tooltip}
@@ -196,12 +204,12 @@ const Header: React.FunctionComponent = () => {
             firstFocusableItemId={archiveButtonId}
         >
             <ButtonGroup minimal={true}>
-                <ActionButton
+                {/*<ActionButton
                     id={archiveButtonId}
                     icon={<Archive />}
                     tooltip={i18n.translate('header.toolbar.exportAll')}
                     onClick={() => dispatch(explorerArchiveAllFiles())}
-                />
+                />*/}
                 <ActionButton
                     id={exportButtonId}
                     // NB: the "export" icon has an arrow pointing up, which is
@@ -273,9 +281,9 @@ function useLiveDescriptors(): LiveDescriptors {
  * REVISIT: maybe there will be a better way to do this some day:
  * https://github.com/lukasbach/react-complex-tree/issues/47
  */
-const TreeContainer: React.FunctionComponent<RenderProps<'renderTreeContainer'>> = (
-    props,
-) => {
+const TreeContainer = (
+    props: RenderProps<'renderTreeContainer'>,
+): React.ReactElement | null => {
     const dispatch = useDispatch();
     const { treeId } = useTree();
     const environment = useTreeEnvironment();
@@ -458,11 +466,38 @@ const FileTree: React.FunctionComponent = () => {
 };
 
 const Explorer: React.FunctionComponent = () => {
+    const dispatch = useDispatch();
+    const settingsI18n = useSettingsI18n();
+
     return (
         <div className="pb-explorer">
             <Header />
             <Divider />
-            <FileTree />
+            <div style={{ flex: '1 1 auto', overflowY: 'auto', minHeight: 0 }}>
+                <FileTree />
+            </div>
+            <Divider />
+            <div
+                className="pb-explorer-firmware-actions"
+                style={{ padding: '10px', flexShrink: 0 }}
+            >
+                <AppComponentButton
+                    id="pb-explorer-flash-pybricks-button" // Unique ID for explorer context
+                    minimal={true}
+                    icon={<Download />}
+                    label={settingsI18n.translate('firmware.flashPybricksButton.label')}
+                    onPress={() => dispatch(firmwareInstallPybricks())}
+                />
+                <AppComponentButton
+                    id="pb-explorer-flash-official-button" // Unique ID for explorer context
+                    minimal={true}
+                    icon={<Download />}
+                    label={settingsI18n.translate('firmware.flashLegoButton.label', {
+                        lego: legoRegisteredTrademark,
+                    })}
+                    onPress={() => dispatch(firmwareRestoreOfficialDialogShow())}
+                />
+            </div>
             <NewFileWizard />
             <RenameFileDialog />
             <RenameImportDialog />
