@@ -86,7 +86,7 @@ type ActionButtonProps = {
     /** The tooltip/title text. */
     tooltip: string;
     /** The text label for the button. */
-    text?: string;
+    buttonText?: string;
     /** Callback for button click event. */
     onClick: () => void;
 };
@@ -95,7 +95,7 @@ const ActionButton: React.FunctionComponent<ActionButtonProps> = ({
     id,
     icon,
     tooltip,
-    text, // Include text in destructuring
+    buttonText, // Include text in destructuring
     onClick,
 }) => {
     const handleClick = useCallback<React.MouseEventHandler>(
@@ -114,7 +114,7 @@ const ActionButton: React.FunctionComponent<ActionButtonProps> = ({
             id={id}
             icon={icon}
             title={tooltip}
-            text={text} // Pass the text prop to BlueprintButton
+            text={buttonText} // Pass the buttonText prop to BlueprintButton
             onClick={handleClick}
             {...toolbarItemFocusProps}
             tabIndex={excludeFromTabOrder ? -1 : 0}
@@ -218,7 +218,7 @@ const Header: React.FunctionComponent = () => {
                     id={newButtonId}
                     icon={<Plus />}
                     tooltip={i18n.translate('header.toolbar.addNew')}
-                    text="New File" // Add text prop
+                    buttonText="New File" // Add buttonText prop
                     onClick={() => dispatch(explorerCreateNewFile())}
                 />
                 <ActionButton
@@ -228,7 +228,7 @@ const Header: React.FunctionComponent = () => {
                     // even though this is the "import" action
                     icon={<Export />}
                     tooltip={i18n.translate('header.toolbar.import')}
-                    text="Upload File" // Add text prop
+                    buttonText="Upload File" // Add buttonText prop
                     onClick={() => dispatch(explorerImportFiles())}
                 />
             </ButtonGroup>
