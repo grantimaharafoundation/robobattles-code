@@ -476,6 +476,7 @@ const Editor: React.FunctionComponent = () => {
             minimap: { enabled: false },
             contextmenu: false,
             rulers: [],
+            wordWrap: 'on',
             lineNumbersMinChars: 4,
             wordBasedSuggestions: 'off',
             selectionClipboard: false, // don't copy selection on Linux
