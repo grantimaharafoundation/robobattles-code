@@ -29,6 +29,12 @@
         padding: bp.$pt-grid-size * 0.3;
         overflow-x: auto;
         @include pb.background-contrast(6%);
+        height: 0;
+        overflow: hidden;
+
+        .#{bp.$ns}-tab-list {
+            display: none;
+        }
 
         .#{bp.$ns}-tab-list > * {
             padding-left: bp.$pt-grid-size * 1.5;
@@ -76,6 +82,32 @@
     &-monaco {
         width: 100%;
         height: 100%;
+
+        .pb-editor-tabpanel.pb-empty > & {
+            display: none;
+        }
+    }
+
+    &-placeholder {
+        pointer-events: none;
+        width: max-content;
+        color: bp.$pt-text-color-muted;
+        font-style: italic;
+        padding-left: 4px;
+
+        .#{bp.$ns}-dark & {
+            color: bp.$pt-dark-text-color-muted;
+        }
+    }
+
+    &-welcome {
+        display: none !important;
+    }
+
+    &-monaco {
+        width: 100%;
+        height: 100%;
+        display: block !important; // Force display even with .pb-empty
 
         .pb-editor-tabpanel.pb-empty > & {
             display: none;
