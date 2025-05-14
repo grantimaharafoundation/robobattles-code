@@ -336,23 +336,18 @@ function* handleExplorerCreateNewFile(): Generator {
         const existingFiles = yield* call(() => db.metadata.toArray());
         const existingFilePaths = existingFiles.map((f) => f.path);
 
-        let nextFileNumber = 1;
-        const baseName = 'my_file_';
-        // pythonFileExtension is already imported and includes the dot (e.g., '.py')
-        const myFileRegex = new RegExp(
-            `^${baseName}(\\d+)${pythonFileExtension.replace('.', '\\.')}$`,
-        );
+        const baseName = 'my_file';
+        let newFileName = `${baseName}${pythonFileExtension}`;
+        let counter = 2;
 
-        for (const path of existingFilePaths) {
-            const match = path.match(myFileRegex);
-            if (match) {
-                const num = parseInt(match[1], 10);
-                if (num >= nextFileNumber) {
-                    nextFileNumber = num + 1;
-                }
-            }
+        // Check if "my_file.py" exists
+        if (existingFilePaths.includes(newFileName)) {
+            // If it exists, try "my_file_2.py", "my_file_3.py", etc.
+            do {
+                newFileName = `${baseName}_${counter}${pythonFileExtension}`;
+                counter++;
+            } while (existingFilePaths.includes(newFileName));
         }
-        const newFileName = `${baseName}${nextFileNumber}${pythonFileExtension}`;
 
         // Using undefined for hubType, assuming getPybricksMicroPythonFileTemplate handles it
         // or provides a default.
