@@ -11,7 +11,7 @@ export function useSettingIsShowDocsEnabled(): {
     toggleIsSettingShowDocsEnabled: () => void;
 } {
     const [isLastSettingShowDocsEnabled, setIsLastSettingShowDocsEnabled] =
-        useLocalStorage('setting.showDocs', window.innerWidth >= 1024);
+        useLocalStorage('setting.showDocs', false);
 
     const [isSettingShowDocsEnabled, setIsSettingShowDocsEnabled] = useSessionStorage(
         'setting.showDocs',
