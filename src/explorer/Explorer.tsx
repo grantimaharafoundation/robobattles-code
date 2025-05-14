@@ -73,7 +73,6 @@ import {
 import DeleteFileAlert from './deleteFileAlert/DeleteFileAlert';
 import DuplicateFileDialog from './duplicateFileDialog/DuplicateFileDialog';
 import { useI18n } from './i18n';
-import NewFileWizard from './newFileWizard/NewFileWizard';
 import RenameFileDialog from './renameFileDialog/RenameFileDialog';
 import RenameImportDialog from './renameImportDialog/RenameImportDialog';
 import ReplaceImportDialog from './replaceImportDialog/ReplaceImportDialog';
@@ -504,7 +503,7 @@ const Explorer: React.FunctionComponent = () => {
                     onPress={() => dispatch(firmwareRestoreOfficialDialogShow())}
                 />
             </div>
-            <NewFileWizard />
+            {/* <NewFileWizard /> */} {/* Removed */}
             <RenameFileDialog />
             <RenameImportDialog />
             <ReplaceImportDialog />

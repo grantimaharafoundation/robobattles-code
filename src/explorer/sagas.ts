@@ -91,11 +91,6 @@ import {
 } from './duplicateFileDialog/actions';
 import { ExplorerError } from './error';
 import {
-    newFileWizardDidAccept,
-    newFileWizardDidCancel,
-    newFileWizardShow,
-} from './newFileWizard/actions';
-import {
     renameFileDialogDidAccept,
     renameFileDialogDidCancel,
     renameFileDialogShow,
@@ -337,32 +332,41 @@ function* handleExplorerImportFiles(): Generator {
 
 function* handleExplorerCreateNewFile(): Generator {
     try {
-        yield* put(newFileWizardShow());
+        const db = yield* getContext<FileStorageDb>('fileStorage');
+        const existingFiles = yield* call(() => db.metadata.toArray());
+        const existingFilePaths = existingFiles.map((f) => f.path);
 
-        const { didAccept, didCancel } = yield* race({
-            didAccept: take(newFileWizardDidAccept),
-            didCancel: take(newFileWizardDidCancel),
-        });
+        let nextFileNumber = 1;
+        const baseName = 'my_file_';
+        // pythonFileExtension is already imported and includes the dot (e.g., '.py')
+        const myFileRegex = new RegExp(
+            `^${baseName}(\\d+)${pythonFileExtension.replace('.', '\\.')}$`,
+        );
 
-        if (didCancel) {
-            throw new DOMException('user canceled', 'AbortError');
+        for (const path of existingFilePaths) {
+            const match = path.match(myFileRegex);
+            if (match) {
+                const num = parseInt(match[1], 10);
+                if (num >= nextFileNumber) {
+                    nextFileNumber = num + 1;
+                }
+            }
         }
+        const newFileName = `${baseName}${nextFileNumber}${pythonFileExtension}`;
 
-        defined(didAccept);
-
-        const fileName = `${didAccept.fileName}${didAccept.fileExtension}`;
-
+        // Using undefined for hubType, assuming getPybricksMicroPythonFileTemplate handles it
+        // or provides a default.
         yield* put(
             fileStorageWriteFile(
-                fileName,
-                getPybricksMicroPythonFileTemplate(didAccept.hubType) || '',
+                newFileName,
+                getPybricksMicroPythonFileTemplate(undefined) || '',
             ),
         );
 
         const { didWrite, didFailToWrite } = yield* race({
-            didWrite: take(fileStorageDidWriteFile.when((a) => a.path === fileName)),
+            didWrite: take(fileStorageDidWriteFile.when((a) => a.path === newFileName)),
             didFailToWrite: take(
-                fileStorageDidFailToWriteFile.when((a) => a.path === fileName),
+                fileStorageDidFailToWriteFile.when((a) => a.path === newFileName),
             ),
         });
 
@@ -376,6 +380,19 @@ function* handleExplorerCreateNewFile(): Generator {
 
         yield* put(explorerDidCreateNewFile());
     } catch (err) {
+        // If user cancels a save dialog triggered by fileSave (not applicable here directly for create)
+        // or other AbortError scenarios, don't show a generic error.
+        if (err instanceof DOMException && err.name === 'AbortError') {
+            // User cancellation (e.g. if fileSave were used and prompted)
+            // For this specific modification, this path is less likely for create,
+            // but good to keep similar error handling structure.
+        } else {
+            yield* put(
+                alertsShowAlert('alerts', 'unexpectedError', {
+                    error: ensureError(err),
+                }),
+            );
+        }
         yield* put(explorerDidFailToCreateNewFile(ensureError(err)));
     }
 }
