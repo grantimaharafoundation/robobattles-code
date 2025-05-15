@@ -202,37 +202,46 @@ const Header: React.FunctionComponent = () => {
     const i18n = useI18n();
 
     return (
-        <Toolbar
-            className="pb-explorer-header-toolbar"
-            aria-label={i18n.translate('header.toolbar.title')}
-            firstFocusableItemId={archiveButtonId}
-        >
-            <ButtonGroup minimal={true}>
-                {/*<ActionButton
-                    id={archiveButtonId}
-                    icon={<Archive />}
-                    tooltip={i18n.translate('header.toolbar.exportAll')}
-                    onClick={() => dispatch(explorerArchiveAllFiles())}
-                />*/}
-                <ActionButton
-                    id={newButtonId}
-                    icon={<Plus />}
-                    tooltip={i18n.translate('header.toolbar.addNew')}
-                    buttonText="New File" // Add buttonText prop
-                    onClick={() => dispatch(explorerCreateNewFile())}
+        <>
+            <div className="pb-explorer-banner">
+                <img
+                    src="logo192.png"
+                    alt="Pybricks Logo"
+                    className="pb-explorer-logo"
                 />
-                <ActionButton
-                    id={exportButtonId}
-                    // NB: the "export" icon has an arrow pointing up, which is
-                    // what we want here since import is analogous to upload
-                    // even though this is the "import" action
-                    icon={<Export />}
-                    tooltip={i18n.translate('header.toolbar.import')}
-                    buttonText="Upload File" // Add buttonText prop
-                    onClick={() => dispatch(explorerImportFiles())}
-                />
-            </ButtonGroup>
-        </Toolbar>
+            </div>
+            <Toolbar
+                className="pb-explorer-header-toolbar"
+                aria-label={i18n.translate('header.toolbar.title')}
+                firstFocusableItemId={archiveButtonId}
+            >
+                <ButtonGroup minimal={true}>
+                    {/*<ActionButton
+                        id={archiveButtonId}
+                        icon={<Archive />}
+                        tooltip={i18n.translate('header.toolbar.exportAll')}
+                        onClick={() => dispatch(explorerArchiveAllFiles())}
+                    />*/}
+                    <ActionButton
+                        id={newButtonId}
+                        icon={<Plus />}
+                        tooltip={i18n.translate('header.toolbar.addNew')}
+                        buttonText="New File" // Add buttonText prop
+                        onClick={() => dispatch(explorerCreateNewFile())}
+                    />
+                    <ActionButton
+                        id={exportButtonId}
+                        // NB: the "export" icon has an arrow pointing up, which is
+                        // what we want here since import is analogous to upload
+                        // even though this is the "import" action
+                        icon={<Export />}
+                        tooltip={i18n.translate('header.toolbar.import')}
+                        buttonText="Upload File" // Add buttonText prop
+                        onClick={() => dispatch(explorerImportFiles())}
+                    />
+                </ButtonGroup>
+            </Toolbar>
+        </>
     );
 };
 
