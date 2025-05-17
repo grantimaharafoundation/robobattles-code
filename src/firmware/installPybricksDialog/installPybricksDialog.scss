@@ -2,13 +2,14 @@
 // Copyright (c) 2022 The Pybricks Authors
 
 @use '@blueprintjs/core/lib/scss/variables' as bp;
+@use '../../variables' as pb; // Added this line, was missing from original read but present in my first attempt
 
 .pb-firmware-installPybricksDialog {
     &-body {
         min-height: bp.$pt-grid-size * 40;
         display: flex;
         flex-direction: column;
-        align-items: flex-start;
+        align-items: center; // Changed from flex-start to center
         gap: bp.$pt-grid-size;
     }
 
@@ -41,5 +42,64 @@
         &-checkbox {
             margin-top: auto;
         }
+    }
+}
+
+// Styles for the color picker
+.pb-color-picker-container {
+    display: flex;
+    flex-direction: row; // Columns will be side-by-side
+    gap: 8px;
+    margin-bottom: bp.$pt-grid-size;
+    overflow-x: auto; // Add scroll if too many columns
+}
+
+.pb-color-picker-column { // Renamed from pb-color-picker-row
+    display: flex;
+    flex-direction: column; // Buttons within a column stack vertically
+    gap: 8px;
+}
+
+.pb-color-pair-button {
+    padding: 0 !important; // Remove padding to eliminate "white border" effect
+    min-width: auto !important;
+    min-height: auto !important;
+    border: 3px solid transparent; // This is for selection outline, transparent by default
+    line-height: normal !important; 
+
+    &.pb-color-pair-selected {
+        border-color: bp.$blue3; // Selection border color
+        // The box-shadow for selection might need to be adjusted if padding is 0
+        // Or, the border: 2px solid bp.$blue3 might be enough.
+    }
+}
+
+.pb-swatch-pair-wrapper {
+    display: flex;
+    flex-direction: row;
+    width: 30px; // Overall width including its own border (20px content + 2px border)
+    height: 30px; // Overall height including its own border (20px content + 2px border)
+    border: 1px solid #c8c8c8; // The gray border around the pair
+    box-sizing: border-box; // Width and height include padding and border
+    // align-items: center; // Not strictly needed if children are height: 100%
+}
+
+.pb-color-swatch {
+    width: 50%; 
+    height: 100%; 
+    box-sizing: border-box; // Important if adding borders to swatches
+
+    &:first-child {
+        border-right: 1px solid #c8c8c8; // Gray divider line
+    }
+}
+
+.pb-color-picker-form-group {
+    // This targets the FormGroup containing the color picker.
+    // It's already centered by its parent's align-items: center.
+    // This rule is to center the text of its label.
+    & > .#{bp.$ns}-label { // Target the direct child label (Blueprint's label class)
+        text-align: center;
+        width: 100%; // Ensure label takes full width of the FormGroup for centering to work
     }
 }

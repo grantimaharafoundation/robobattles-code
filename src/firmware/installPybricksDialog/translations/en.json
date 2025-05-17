@@ -55,6 +55,9 @@
             "labelInfo": "(optional)",
             "help": "Choose a Bluetooth name for your hub. If you have more than one hub, this makes it easy to tell them apart when you connect.",
             "error": "The name is too long."
+        },
+        "colorPair": {
+            "label": "Select light color"
         }
     },
     "bootloaderPanel": {
