@@ -48,7 +48,7 @@ import { useI18n } from './i18n';
 const AppColors = {
     white: { h: 0, s: 0, v: 100 },
     red: { h: 0, s: 90, v: 100 },
-    orange: { h: 30, s: 90, v: 100 },
+    orang: { h: 30, s: 90, v: 100 },
     yellw: { h: 60, s: 90, v: 100 },
     green: { h: 130, s: 90, v: 100 },
     cyan: { h: 180, s: 90, v: 100 },
@@ -619,6 +619,13 @@ export const InstallPybricksDialog: React.FunctionComponent = () => {
                         onChangeColorPair={setSelectedColorPair}
                     />
                 }
+                nextButtonProps={{
+                    // text: i18n.translate('nextButton.label'), // Can inherit from MultistepDialog or be set explicitly
+                    onClick: () => {
+                        console.log('Selected Hub Name:', hubName);
+                        // Default dialog progression should occur unless this function returns false or prevents default.
+                    },
+                }}
             />
             <DialogStep
                 id="bootloader"
