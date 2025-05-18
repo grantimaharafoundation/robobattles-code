@@ -189,7 +189,7 @@ const App: React.FunctionComponent = () => {
     }, []);
 
     return (
-        <div className="pb-app" onContextMenu={(e) => e.preventDefault()}>
+        <div className="pb-app">
             <div className="pb-app-body">
                 <aside
                     className="pb-app-activities"
