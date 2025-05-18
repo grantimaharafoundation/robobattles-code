@@ -34,6 +34,10 @@
     }
 }
 
+.pb-app-terminal {
+    padding:0px !important;
+}
+
 @keyframes pb-terminal-cursor {
     50% {
         border-style: hidden;

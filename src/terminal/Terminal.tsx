@@ -144,8 +144,8 @@ const Terminal: React.FunctionComponent = () => {
     // wire up isDarkMode to terminal
     useEffect(() => {
         xterm.options.theme = {
-            background: isDarkMode ? 'black' : 'white',
-            foreground: isDarkMode ? 'white' : 'black',
+            background: isDarkMode ? 'black' : '#e4e4e4',
+            foreground: isDarkMode ? '#e4e4e4' : 'black',
             cursor: isDarkMode ? 'white' : 'black',
             // transparency is needed to work around https://github.com/xtermjs/xterm.js/issues/2808
             selectionBackground: isDarkMode
