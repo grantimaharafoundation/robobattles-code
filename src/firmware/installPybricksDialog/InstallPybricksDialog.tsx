@@ -46,8 +46,8 @@ import { useI18n } from './i18n';
 const AppColors = {
     white: { h: 0, s: 0, v: 100 },
     red: { h: 0, s: 90, v: 100 },
-    orange: { h: 30, s: 90, v: 100 },
-    yellow: { h: 60, s: 90, v: 100 },
+    orang: { h: 30, s: 90, v: 100 },
+    yellw: { h: 60, s: 90, v: 100 },
     green: { h: 130, s: 90, v: 100 },
     blue: { h: 240, s: 90, v: 100 },
     pink: { h: 300, s: 90, v: 100 }, // Using "pink" as the key for Magenta
