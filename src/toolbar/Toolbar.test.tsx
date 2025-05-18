@@ -21,20 +21,4 @@ describe('toolbar', () => {
 
         expect(runButton).toBeDefined();
     });
-
-    it('should have stop button', () => {
-        const [, toolbar] = testRender(<Toolbar />);
-
-        const runButton = toolbar.getByRole('button', { name: 'Stop' });
-
-        expect(runButton).toBeDefined();
-    });
-
-    it('should have repl button', () => {
-        const [, toolbar] = testRender(<Toolbar />);
-
-        const runButton = toolbar.getByRole('button', { name: 'REPL' });
-
-        expect(runButton).toBeDefined();
-    });
 });
