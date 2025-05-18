@@ -51,7 +51,7 @@ describe('firmware', () => {
         const [user, settings, dispatch] = testRender(<Settings />);
 
         const button = settings.getByRole('button', {
-            name: 'Install Pybricks Firmware',
+            name: 'Install Bot Battles Firmware',
         });
         await act(() => user.click(button));
 
@@ -62,7 +62,7 @@ describe('firmware', () => {
         const [user, settings, dispatch] = testRender(<Settings />);
 
         const button = settings.getByRole('button', {
-            name: 'Restore Official LEGO® Firmware',
+            name: 'Restore LEGO® Firmware',
         });
         await act(() => user.click(button));
 

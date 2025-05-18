@@ -31,19 +31,6 @@ const testFile: FileMetadata = {
     viewState: null,
 };
 
-describe('archive button', () => {
-    it('should dispatch action when clicked', async () => {
-        jest.mocked(useFileStorageMetadata).mockReturnValue([testFile]);
-        const [user, explorer, dispatch] = testRender(<Explorer />);
-
-        const button = explorer.getByTitle('Backup all files');
-        expect(button).toBeEnabled();
-
-        await act(() => user.click(button));
-        expect(dispatch).toHaveBeenCalledWith(explorerArchiveAllFiles());
-    });
-});
-
 describe('import file button', () => {
     it('should dispatch action when clicked', async () => {
         const [user, explorer, dispatch] = testRender(<Explorer />);

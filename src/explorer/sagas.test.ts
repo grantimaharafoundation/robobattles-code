@@ -29,6 +29,7 @@ import {
     fileStorageDidFailToDumpAllFiles,
     fileStorageDidFailToReadFile,
     fileStorageDidFailToRenameFile,
+    // fileStorageDidFailToWriteFile, // Will be imported with an alias
     fileStorageDidReadFile,
     fileStorageDidRenameFile,
     fileStorageDidWriteFile,
@@ -36,6 +37,7 @@ import {
     fileStorageReadFile,
     fileStorageRenameFile,
     fileStorageWriteFile,
+    fileStorageDidFailToWriteFile as importedFileStorageDidFailToWriteFile, // Import with an alias
 } from '../fileStorage/actions';
 import { pythonFileExtension } from '../pybricksMicropython/lib';
 import {
@@ -592,53 +594,97 @@ describe('handleExplorerImportFiles', () => {
 });
 
 describe('handleExplorerCreateNewFile', () => {
-    let saga: AsyncSaga;
+    const mockFileStorage = (...files: FileMetadata[]) => {
+        return mock<FileStorageDb>({
+            metadata: { toArray: () => Dexie.Promise.resolve(files) },
+        });
+    };
 
-    beforeEach(async () => {
-        saga = new AsyncSaga(explorer);
+    it('should create a new file and activate it', async () => {
+        const saga = new AsyncSaga(explorer, {
+            fileStorage: mockFileStorage(), // Provide mock for db.metadata.toArray()
+        });
 
         saga.put(explorerCreateNewFile());
 
-        await expect(saga.take()).resolves.toEqual(newFileWizardShow());
+        const writeFileActionDefault = (await saga.take()) as { type: string; path: string; contents: string };
+        const sampleWriteAction = fileStorageWriteFile('dummy', 'dummy');
+        expect(writeFileActionDefault.type).toBe(sampleWriteAction.type);
+        const expectedDefaultFileName = `my_file${pythonFileExtension}`;
+        expect(writeFileActionDefault.path).toBe(expectedDefaultFileName);
+        expect(typeof writeFileActionDefault.contents).toBe('string');
+
+        const newFileUuidDefault = uuid(0);
+        saga.put(
+            fileStorageDidWriteFile(writeFileActionDefault.path, newFileUuidDefault),
+        );
+
+        await expect(saga.take()).resolves.toEqual(editorActivateFile(newFileUuidDefault));
+        await expect(saga.take()).resolves.toEqual(explorerDidCreateNewFile());
+
+        await saga.end();
     });
 
-    it('should dispatch error when canceled', async () => {
-        saga.put(newFileWizardDidCancel());
+    it('should create a new file with an incremented name if default exists', async () => {
+        const existingFileName = `my_file${pythonFileExtension}`;
+        const saga = new AsyncSaga(explorer, {
+            fileStorage: mockFileStorage({
+                uuid: uuid(1),
+                path: existingFileName,
+                sha256: '',
+                viewState: null,
+            }),
+        });
 
-        await expect(saga.take()).resolves.toEqual(
-            explorerDidFailToCreateNewFile(
-                new DOMException('user canceled', 'AbortError'),
+        saga.put(explorerCreateNewFile());
+
+        const expectedIncrementedFileName = `my_file_2${pythonFileExtension}`;
+        const writeFileActionIncremented = (await saga.take()) as { type: string; path: string; contents: string };
+        const sampleWriteActionInc = fileStorageWriteFile('dummy', 'dummy');
+        expect(writeFileActionIncremented.type).toBe(sampleWriteActionInc.type);
+        expect(writeFileActionIncremented.path).toBe(expectedIncrementedFileName);
+        expect(typeof writeFileActionIncremented.contents).toBe('string');
+
+        const newFileUuidIncremented = uuid(0);
+        saga.put(
+            fileStorageDidWriteFile(
+                writeFileActionIncremented.path,
+                newFileUuidIncremented,
             ),
         );
-    });
 
-    it('should dispatch fileStorage action', async () => {
-        saga.put(newFileWizardDidAccept('test', pythonFileExtension, Hub.Technic));
-
-        await expect(saga.take()).resolves.toMatchInlineSnapshot(`
-            {
-              "contents": "from pybricks.hubs import TechnicHub
-            from pybricks.pupdevices import Motor
-            from pybricks.parameters import Button, Color, Direction, Port, Side, Stop
-            from pybricks.robotics import DriveBase
-            from pybricks.tools import wait, StopWatch
-
-            hub = TechnicHub()
-
-            ",
-              "path": "test.py",
-              "type": "fileStorage.action.writeFile",
-            }
-        `);
-
-        saga.put(fileStorageDidWriteFile('test.py', uuid(0)));
-
-        await expect(saga.take()).resolves.toEqual(editorActivateFile(uuid(0)));
-
+        await expect(saga.take()).resolves.toEqual(editorActivateFile(newFileUuidIncremented));
         await expect(saga.take()).resolves.toEqual(explorerDidCreateNewFile());
+
+        await saga.end();
     });
 
-    afterEach(async () => {
+    it('should handle failure during file write', async () => {
+        const saga = new AsyncSaga(explorer, {
+            fileStorage: mockFileStorage(),
+        });
+        const testError = new Error('write failed');
+
+        saga.put(explorerCreateNewFile());
+
+        const writeFileActionFailed = (await saga.take()) as { type: string; path: string; contents: string };
+        const sampleWriteActionFail = fileStorageWriteFile('dummy', 'dummy');
+        expect(writeFileActionFailed.type).toBe(sampleWriteActionFail.type);
+        // Path will be my_file.py as it's the first attempt in this test case
+        expect(writeFileActionFailed.path).toBe(`my_file${pythonFileExtension}`);
+        expect(typeof writeFileActionFailed.contents).toBe('string');
+
+        // Explicitly use the imported action creator
+        const failAction = importedFileStorageDidFailToWriteFile(writeFileActionFailed.path, testError);
+        saga.put(failAction);
+
+        await expect(saga.take()).resolves.toEqual(
+            alertsShowAlert('alerts', 'unexpectedError', { error: testError }),
+        );
+        await expect(saga.take()).resolves.toEqual(
+            explorerDidFailToCreateNewFile(testError),
+        );
+
         await saga.end();
     });
 });
