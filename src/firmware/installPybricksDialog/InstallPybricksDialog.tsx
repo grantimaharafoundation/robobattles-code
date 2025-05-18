@@ -44,13 +44,13 @@ import { FirmwareData, useCustomFirmware, useFirmware } from './hooks';
 import { useI18n } from './i18n';
 
 const AppColors = {
-    white: { h: 0, s: 0, v: 100 },
-    red: { h: 0, s: 90, v: 100 },
-    orang: { h: 30, s: 90, v: 100 },
-    yellw: { h: 60, s: 90, v: 100 },
-    green: { h: 130, s: 90, v: 100 },
-    blue: { h: 240, s: 90, v: 100 },
-    pink: { h: 300, s: 90, v: 100 }, // Using "pink" as the key for Magenta
+    White: { h: 0, s: 0, v: 100 },
+    Red: { h: 0, s: 90, v: 100 },
+    Orang: { h: 30, s: 90, v: 100 },
+    Yellw: { h: 60, s: 90, v: 100 },
+    Green: { h: 130, s: 90, v: 100 },
+    Blue: { h: 240, s: 90, v: 100 },
+    Pink: { h: 300, s: 90, v: 100 }, // Using "pink" as the key for Magenta
 } as const;
 
 type AppColorName = keyof typeof AppColors;
@@ -395,13 +395,13 @@ const ConfigureOptionsPanel: React.FunctionComponent<SelectOptionsPanelProps> = 
 
     const handleColor1Select = (color: AppColorName) => {
         onChangeColor1(color);
-        const newHubName = `hub ${color} ${selectedColor2 ?? ColorOptionsArray[0]}`;
+        const newHubName = `Hub ${color}/${selectedColor2 ?? ColorOptionsArray[0]}`;
         onChangeHubName(newHubName);
     };
 
     const handleColor2Select = (color: AppColorName) => {
         onChangeColor2(color);
-        const newHubName = `hub ${selectedColor1 ?? ColorOptionsArray[0]} ${color}`;
+        const newHubName = `Hub ${selectedColor1 ?? ColorOptionsArray[0]}/${color}`;
         onChangeHubName(newHubName);
     };
 
@@ -511,7 +511,7 @@ export const InstallPybricksDialog: React.FunctionComponent = () => {
     // Initialize with the first color pair (e.g., white/white)
     const defaultColor1 = ColorOptionsArray[0];
     const defaultColor2 = ColorOptionsArray[0];
-    const initialHubName = `hub ${defaultColor1} ${defaultColor2}`;
+    const initialHubName = `Hub ${defaultColor1}/${defaultColor2}`;
     const [hubName, setHubName] = useState(initialHubName);
     const [selectedColor1, setSelectedColor1] = useState<AppColorName | undefined>(
         defaultColor1,
