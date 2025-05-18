@@ -3,6 +3,14 @@
 
 @use '@blueprintjs/core/lib/scss/variables' as bp;
 
+.pb-activities-tabview {
+    background-color: #f4f5f6;
+}
+
+.pb-explorer-firmware-actions {
+    padding:0px !important;
+}
+
 .pb-explorer {
     min-height: 0;
     flex: 1;
@@ -15,7 +23,7 @@
         align-items: center;
         padding-bottom: 6px;
         margin-bottom:6px;
-        margin-top:-2px;
+        margin-top:-5px;
     }
 
     &-logo {
@@ -50,7 +58,7 @@
         &-item-active {
             // Targets the <li> element directly
             & > .#{bp.$ns}-tree-node-content {
-                background-color: rgba(bp.$blue3, 0.15); // Use a blueprint color with some transparency
+                background-color: #cddcf0; // Use a blueprint color with some transparency
             }
 
             // Targets the label span inside the content

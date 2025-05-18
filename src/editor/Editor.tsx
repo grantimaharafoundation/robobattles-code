@@ -20,7 +20,6 @@ import { Blank, Clipboard, Cross, Duplicate, Redo, Undo } from '@blueprintjs/ico
 import classNames from 'classnames';
 import * as monaco from 'monaco-editor';
 import tomorrowNightEightiesTheme from 'monaco-themes/themes/Tomorrow-Night-Eighties.json';
-import xcodeTheme from 'monaco-themes/themes/Xcode_default.json';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useId } from 'react-aria';
 import { useDispatch } from 'react-redux';
@@ -36,6 +35,7 @@ import { editorActivateFile, editorCloseFile } from './actions';
 import { useI18n } from './i18n';
 import * as pybricksMicroPython from './pybricksMicroPython';
 import { pybricksMicroPythonId } from './pybricksMicroPython';
+import xcodeTheme from './themes/customXcodeTheme.json';
 import { UntitledHintContribution } from './untitledHint';
 
 monaco.languages.register({ id: pybricksMicroPythonId });
@@ -480,6 +480,9 @@ const Editor: React.FunctionComponent = () => {
             lineNumbersMinChars: 4,
             wordBasedSuggestions: 'off',
             selectionClipboard: false, // don't copy selection on Linux
+            copyWithSyntaxHighlighting: false, // Ensure text is copied as plain text
+            occurrencesHighlight: 'off',
+            emptySelectionClipboard: false, // Do not copy the Tine if selection is empty
         });
 
         monacoEditor.focus();
@@ -508,6 +511,7 @@ const Editor: React.FunctionComponent = () => {
                     // that don't have events to monitor changes.
                     content={() => <EditorContextMenu editor={editor} />}
                     popoverProps={popoverProps}
+                    disabled={true}
                 >
                     <Welcome isVisible={isEmpty} />
                     <div className="pb-editor-monaco" ref={editorRef} />

@@ -10,7 +10,6 @@
 
 .pb-beta .editor-scrollable::after {
     content: '';
-    background: url('./beta.svg');
     opacity: 1;
     top: 0;
     left: 0;
@@ -67,6 +66,10 @@
     &-tabpanel {
         min-height: 0;
         flex: 1 1 auto;
+
+        &.pb-empty {
+            background-color: #e6e6e6;
+        }
     }
 
     &-welcome {
@@ -94,6 +97,7 @@
         color: bp.$pt-text-color-muted;
         font-style: italic;
         padding-left: 4px;
+        color: #888888;
 
         .#{bp.$ns}-dark & {
             color: bp.$pt-dark-text-color-muted;
@@ -114,24 +118,16 @@
         }
     }
 
-    &-placeholder {
-        pointer-events: none;
-        width: max-content;
-        color: bp.$pt-text-color-muted;
-        font-style: italic;
-        padding-left: 4px;
-
-        .#{bp.$ns}-dark & {
-            color: bp.$pt-dark-text-color-muted;
-        }
-    }
-
     &-doc-button {
         position: absolute;
         bottom: bp.$pt-grid-size;
         right: bp.$pt-grid-size;
         z-index: bp.$pt-z-index-overlay;
     }
+}
+
+.pb-editor-tablist {
+    display:none;
 }
 
 .monaco-editor {
