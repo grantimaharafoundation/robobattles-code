@@ -20,14 +20,14 @@
     },
     "noHub": {
         "message": "No hub detected.",
-        "suggestion": "Have you installed the Pybricks firmware yet?",
-        "flashFirmwareButton": "Install Pybricks firmware",
+        "suggestion": "Have you installed the Bot Battles firmware yet?",
+        "flashFirmwareButton": "Install Bot Battles firmware",
         "troubleshootButton": "Solve connectivity issues"
     },
     "oldFirmware": {
         "message": "A new firmware version is available for this hub. Please install the latest version to use all new features.",
         "flashFirmware": {
-            "label": "Update Pybricks firmware"
+            "label": "Update Bot Battles firmware"
         }
     },
     "newPybricksProfile": {

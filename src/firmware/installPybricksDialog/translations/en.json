@@ -1,5 +1,5 @@
 {
-    "title": "Install Pybricks Firmware",
+    "title": "Install Bot Battles Firmware",
     "selectHubPanel": {
         "title": "Select hub type",
         "message": "Select your hub.",
@@ -7,22 +7,8 @@
             "label": "What about other hubs?",
             "info": {
                 "mindstorms": {
-                    "title": "{legoMindstormsRegisteredTrademark} bricks",
-                    "intro": "{appName} does not currently support previous generations of {legoMindstormsRegisteredTrademark}.",
-                    "help": {
-                        "message": "But with your help, it can! Click the {sponsor} button in the top right to see how you can support us.",
-                        "sponsor": "sponsor"
-                    },
-                    "rcx": "RCX: Might work in streaming mode.",
-                    "nxt": "NXT: We have tested this. It could work!",
-                    "ev3": "EV3: Supported using Visual Studio Code."
-                },
-                "poweredUp": {
-                    "title": "Other hubs",
-                    "intro": "Support for these hubs is currently not planned.",
-                    "wedo2": "WeDo 2.0 Smart hub.",
-                    "duploTrain": "Duplo Train hub.",
-                    "mario": "Mario/Luigi/Peach."
+                    "title": "Bot Battles Firmware",
+                    "intro": "Bot Battles does not currently offer firmware for other LEGO® hubs. Support for the Large Spike™ Prime hub may be available in the future."
                 }
             }
         },

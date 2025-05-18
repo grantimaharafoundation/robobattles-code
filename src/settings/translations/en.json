@@ -13,7 +13,7 @@
     "firmware": {
         "title": "Firmware",
         "flashPybricksButton": {
-            "label": "Install Pybricks Firmware"
+            "label": "Install Bot Battles Firmware"
         },
         "flashLegoButton": {
             "label": "Restore Official {lego} Firmware"
