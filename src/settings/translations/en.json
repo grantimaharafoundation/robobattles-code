@@ -16,7 +16,7 @@
             "label": "Install Bot Battles Firmware"
         },
         "flashLegoButton": {
-            "label": "Restore Official {lego} Firmware"
+            "label": "Restore {lego} Firmware"
         }
     },
     "help": {
