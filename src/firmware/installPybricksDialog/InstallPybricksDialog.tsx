@@ -48,8 +48,8 @@ import { useI18n } from './i18n';
 const AppColors = {
     white: { h: 0, s: 0, v: 100 },
     red: { h: 0, s: 90, v: 100 },
-    orang: { h: 30, s: 90, v: 100 },
-    yellw: { h: 60, s: 90, v: 100 },
+    orange: { h: 30, s: 90, v: 100 },
+    yellow: { h: 60, s: 90, v: 100 },
     green: { h: 130, s: 90, v: 100 },
     blue: { h: 240, s: 90, v: 100 },
     pink: { h: 300, s: 90, v: 100 }, // Using "pink" as the key for Magenta
@@ -61,18 +61,37 @@ const ColorOptionsArray: AppColorName[] = Object.keys(AppColors) as AppColorName
 
 // HSV to HSL conversion function (for CSS)
 function hsvToHsl(
-    h: number,
-    s: number,
-    v: number,
+    h_in: number,
+    s_in: number,
+    v_in: number,
 ): { h: number; s: number; l: number } {
-    s /= 100;
-    v /= 100;
-    const l = v * (1 - s / 2);
-    let newS = 0;
-    if (l > 0 && l < 1) {
-        newS = (v - l) / Math.min(l, 1 - l);
+    const h = Number(h_in);
+    const s_norm = Number(s_in) / 100; // s_in is 0-100, s_norm is 0-1
+    const v_norm = Number(v_in) / 100; // v_in is 0-100, v_norm is 0-1
+
+    let l_norm: number; // Lightness, 0-1
+    let s_hsl_norm: number; // Saturation for HSL, 0-1
+
+    if (s_norm === 0) {
+        // Achromatic case (gray, white, black)
+        l_norm = v_norm;
+        s_hsl_norm = 0;
+    } else {
+        // Chromatic case
+        l_norm = v_norm * (1 - s_norm / 2);
+        if (l_norm === 0 || l_norm === 1) {
+            // Black or white due to extreme lightness/darkness with some saturation
+            s_hsl_norm = 0;
+        } else {
+            s_hsl_norm = (v_norm - l_norm) / Math.min(l_norm, 1 - l_norm);
+        }
     }
-    return { h, s: newS * 100, l: l * 100 };
+
+    return {
+        h: h,
+        s: s_hsl_norm * 100, // Convert back to 0-100
+        l: l_norm * 100, // Convert back to 0-100
+    };
 }
 
 const getColorDisplayName = (color: AppColorName): string => {
@@ -414,81 +433,98 @@ type SelectOptionsPanelProps = {
     hubName: string;
     metadata: FirmwareMetadata | undefined;
     onChangeHubName(hubName: string): void;
-    selectedColorPair: [AppColorName, AppColorName] | undefined;
-    onChangeColorPair: (pair: [AppColorName, AppColorName]) => void;
+    selectedColor1: AppColorName | undefined;
+    onChangeColor1: (color: AppColorName) => void;
+    selectedColor2: AppColorName | undefined;
+    onChangeColor2: (color: AppColorName) => void;
 };
 
 const ConfigureOptionsPanel: React.FunctionComponent<SelectOptionsPanelProps> = ({
     hubName: _hubName,
     metadata: _metadata,
     onChangeHubName,
-    selectedColorPair,
-    onChangeColorPair,
+    selectedColor1,
+    onChangeColor1,
+    selectedColor2,
+    onChangeColor2,
 }) => {
     const i18n = useI18n();
 
-    const handleColorSelect = (color1: AppColorName, color2: AppColorName) => {
-        onChangeColorPair([color1, color2]);
-        const newHubName = `hub ${color1} ${color2}`;
+    const handleColor1Select = (color: AppColorName) => {
+        onChangeColor1(color);
+        const newHubName = `hub ${color} ${selectedColor2 ?? ColorOptionsArray[0]}`;
+        onChangeHubName(newHubName);
+    };
+
+    const handleColor2Select = (color: AppColorName) => {
+        onChangeColor2(color);
+        const newHubName = `hub ${selectedColor1 ?? ColorOptionsArray[0]} ${color}`;
         onChangeHubName(newHubName);
     };
 
     return (
         <div className={dialogBody}>
+            <p className="pb-select-hub-light-color-label">
+                {i18n.translate('optionsPanel.selectHubLightColor.label')}
+            </p>
             <FormGroup
-                label={i18n.translate('optionsPanel.colorPair.label')}
-                className="pb-color-picker-form-group" // Add a custom class
+                label={i18n.translate('optionsPanel.color1.label')}
+                className="pb-color-picker-form-group pb-color-picker-label-normal"
             >
-                <div className="pb-color-picker-container">
-                    {ColorOptionsArray.map((color1, index1) => (
-                        <div key={`col-${color1}`} className="pb-color-picker-column">
-                            {/* Inner loop starts from color1 to ensure unique pairs (color1, color2) where color2 >= color1 */}
-                            {ColorOptionsArray.slice(index1).map((color2) => {
-                                // const actualRowColor = color2; // Simpler name
-
-                                const isSelected =
-                                    selectedColorPair?.[0] === color1 &&
-                                    selectedColorPair?.[1] === color2;
-
-                                const c1Hsv = AppColors[color1];
-                                const c2Hsv = AppColors[color2];
-                                const c1Hsl = hsvToHsl(c1Hsv.h, c1Hsv.s, c1Hsv.v);
-                                const c2Hsl = hsvToHsl(c2Hsv.h, c2Hsv.s, c2Hsv.v);
-
-                                return (
-                                    <Button
-                                        key={`${color1}-${color2}`}
-                                        className={classNames('pb-color-pair-button', {
-                                            'pb-color-pair-selected': isSelected,
-                                        })}
-                                        onClick={() =>
-                                            handleColorSelect(color1, color2)
-                                        }
-                                        aria-label={`Select ${getColorDisplayName(
-                                            color1,
-                                        )} and ${getColorDisplayName(color2)}`}
-                                    >
-                                        <div className="pb-swatch-pair-wrapper">
-                                            <div
-                                                className="pb-color-swatch"
-                                                style={{
-                                                    backgroundColor: `hsl(${c1Hsl.h}, ${c1Hsl.s}%, ${c1Hsl.l}%)`,
-                                                }}
-                                                title={getColorDisplayName(color1)}
-                                            />
-                                            <div
-                                                className="pb-color-swatch"
-                                                style={{
-                                                    backgroundColor: `hsl(${c2Hsl.h}, ${c2Hsl.s}%, ${c2Hsl.l}%)`,
-                                                }}
-                                                title={getColorDisplayName(color2)}
-                                            />
-                                        </div>
-                                    </Button>
-                                );
-                            })}
-                        </div>
-                    ))}
+                <div className="pb-color-picker-row">
+                    {ColorOptionsArray.map((color) => {
+                        const isSelected = selectedColor1 === color;
+                        const colorHsv = AppColors[color];
+                        const colorHsl = hsvToHsl(colorHsv.h, colorHsv.s, colorHsv.v);
+                        return (
+                            <Button
+                                key={`row1-${color}`}
+                                className={classNames('pb-color-button', {
+                                    'pb-color-selected': isSelected,
+                                })}
+                                onClick={() => handleColor1Select(color)}
+                                aria-label={`Select ${getColorDisplayName(
+                                    color,
+                                )} for Color 1`}
+                                minimal={true}
+                                text=""
+                                style={{
+                                    backgroundColor: `hsl(${colorHsl.h}, ${colorHsl.s}%, ${colorHsl.l}%)`,
+                                }}
+                                title={getColorDisplayName(color)}
+                            />
+                        );
+                    })}
+                </div>
+            </FormGroup>
+            <FormGroup
+                label={i18n.translate('optionsPanel.color2.label')}
+                className="pb-color-picker-form-group pb-color-picker-label-normal"
+            >
+                <div className="pb-color-picker-row">
+                    {ColorOptionsArray.map((color) => {
+                        const isSelected = selectedColor2 === color;
+                        const colorHsv = AppColors[color];
+                        const colorHsl = hsvToHsl(colorHsv.h, colorHsv.s, colorHsv.v);
+                        return (
+                            <Button
+                                key={`row2-${color}`}
+                                className={classNames('pb-color-button', {
+                                    'pb-color-selected': isSelected,
+                                })}
+                                onClick={() => handleColor2Select(color)}
+                                aria-label={`Select ${getColorDisplayName(
+                                    color,
+                                )} for Color 2`}
+                                minimal={true}
+                                text=""
+                                style={{
+                                    backgroundColor: `hsl(${colorHsl.h}, ${colorHsl.s}%, ${colorHsl.l}%)`,
+                                }}
+                                title={getColorDisplayName(color)}
+                            />
+                        );
+                    })}
                 </div>
             </FormGroup>
             {/* You can uncomment this InputGroup if you need to see the generated hub name for debugging */}
@@ -534,9 +570,12 @@ export const InstallPybricksDialog: React.FunctionComponent = () => {
     const defaultColor2 = ColorOptionsArray[0];
     const initialHubName = `hub ${defaultColor1} ${defaultColor2}`;
     const [hubName, setHubName] = useState(initialHubName);
-    const [selectedColorPair, setSelectedColorPair] = useState<
-        [AppColorName, AppColorName] | undefined
-    >([defaultColor1, defaultColor2]);
+    const [selectedColor1, setSelectedColor1] = useState<AppColorName | undefined>(
+        defaultColor1,
+    );
+    const [selectedColor2, setSelectedColor2] = useState<AppColorName | undefined>(
+        defaultColor2,
+    );
     const [licenseAccepted, setLicenseAccepted] = useState(false);
     const [hubType] = useHubPickerSelectedHub();
     const { firmwareData, firmwareError } = useFirmware(hubType);
@@ -624,8 +663,10 @@ export const InstallPybricksDialog: React.FunctionComponent = () => {
                                 : firmwareData?.metadata
                         }
                         onChangeHubName={setHubName}
-                        selectedColorPair={selectedColorPair}
-                        onChangeColorPair={setSelectedColorPair}
+                        selectedColor1={selectedColor1}
+                        onChangeColor1={setSelectedColor1}
+                        selectedColor2={selectedColor2}
+                        onChangeColor2={setSelectedColor2}
                     />
                 }
                 // Removed custom nextButtonProps from here to restore default navigation
