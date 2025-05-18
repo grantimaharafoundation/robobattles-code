@@ -3,7 +3,7 @@
 
 import './hubPicker.scss';
 import { Radio, RadioGroup } from '@blueprintjs/core';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useHubPickerSelectedHub } from './hooks';
 import { Hub } from '.';
 
@@ -18,10 +18,20 @@ const HubIcon: React.FunctionComponent<HubIconProps> = ({ url, label }) => {
 
 type HubPickerProps = {
     disabled?: boolean;
+    initialSelectedHub?: Hub;
 };
 
-export const HubPicker: React.FunctionComponent<HubPickerProps> = ({ disabled }) => {
+export const HubPicker: React.FunctionComponent<HubPickerProps> = ({
+    disabled,
+    initialSelectedHub,
+}) => {
     const [selectedHub, setSelectedHub] = useHubPickerSelectedHub();
+
+    useEffect(() => {
+        if (initialSelectedHub && initialSelectedHub !== selectedHub) {
+            setSelectedHub(initialSelectedHub);
+        }
+    }, [initialSelectedHub, setSelectedHub, selectedHub]);
 
     return (
         <RadioGroup

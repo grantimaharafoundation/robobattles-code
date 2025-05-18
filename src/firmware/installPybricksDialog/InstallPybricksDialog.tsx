@@ -168,12 +168,14 @@ type SelectHubPanelProps = {
     isCustomFirmwareRequested: boolean;
     customFirmwareData: FirmwareData | undefined;
     onCustomFirmwareZip: (firmwareZip: File | undefined) => void;
+    initialHubTypeForPicker?: Hub;
 };
 
 const SelectHubPanel: React.FunctionComponent<SelectHubPanelProps> = ({
     isCustomFirmwareRequested,
     customFirmwareData,
     onCustomFirmwareZip,
+    initialHubTypeForPicker,
 }) => {
     const [isAdvancedOpen, setIsAdvancedOpen] = useLocalStorage(
         'installPybricksDialog.isAdvancedOpen',
@@ -271,7 +273,7 @@ const SelectHubPanel: React.FunctionComponent<SelectHubPanelProps> = ({
             ) : (
                 <>
                     <p>{i18n.translate('selectHubPanel.message')}</p>
-                    <HubPicker />
+                    <HubPicker initialSelectedHub={initialHubTypeForPicker} />
                     <Popover
                         popoverClassName={Classes.POPOVER_CONTENT_SIZING}
                         placement="right-end"
@@ -519,7 +521,8 @@ export const InstallPybricksDialog: React.FunctionComponent = () => {
     );
     const [licenseAccepted, setLicenseAccepted] = useState(false);
     // Default to Technic Hub and manage hubType state locally
-    const [hubType] = useState<Hub>(Hub.Technic);
+    const [hubType] = useState<Hub>(Hub.Technic); // This will be used for the HubPicker initial value
+
     // The useHubPickerSelectedHub hook is no longer the primary source for hubType
     // const [pickerHubType] = useHubPickerSelectedHub(); // Keep if SelectHubPanel is conditionally rendered
 
@@ -581,6 +584,7 @@ export const InstallPybricksDialog: React.FunctionComponent = () => {
                         isCustomFirmwareRequested={isCustomFirmwareRequested}
                         customFirmwareData={customFirmwareData}
                         onCustomFirmwareZip={setCustomFirmwareZip}
+                        initialHubTypeForPicker={hubType} // Pass Hub.Technic here
                     />
                 }
             />
