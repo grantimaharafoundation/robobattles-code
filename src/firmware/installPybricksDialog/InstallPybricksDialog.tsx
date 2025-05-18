@@ -51,7 +51,6 @@ const AppColors = {
     orang: { h: 30, s: 90, v: 100 },
     yellw: { h: 60, s: 90, v: 100 },
     green: { h: 130, s: 90, v: 100 },
-    cyan: { h: 180, s: 90, v: 100 },
     blue: { h: 240, s: 90, v: 100 },
     pink: { h: 300, s: 90, v: 100 }, // Using "pink" as the key for Magenta
 } as const;
@@ -553,11 +552,21 @@ export const InstallPybricksDialog: React.FunctionComponent = () => {
         ? getHubTypeFromMetadata(customFirmwareData?.metadata, hubType)
         : hubType;
 
+    const handleStepChange = useCallback(
+        (newStepId: string, prevStepId: string | undefined) => {
+            if (prevStepId === 'options' && newStepId === 'bootloader') {
+                console.log('Selected Hub Name (from options step):', hubName);
+            }
+        },
+        [hubName], // Add hubName to dependency array
+    );
+
     return (
         <MultistepDialog
             title={i18n.translate('title')}
             isOpen={isOpen}
             onClose={() => dispatch(firmwareInstallPybricksDialogCancel())}
+            onChange={handleStepChange} // Add the onChange handler here
             backButtonProps={{ text: i18n.translate('backButton.label') }}
             nextButtonProps={{ text: i18n.translate('nextButton.label') }}
             finalButtonProps={{
@@ -619,13 +628,7 @@ export const InstallPybricksDialog: React.FunctionComponent = () => {
                         onChangeColorPair={setSelectedColorPair}
                     />
                 }
-                nextButtonProps={{
-                    // text: i18n.translate('nextButton.label'), // Can inherit from MultistepDialog or be set explicitly
-                    onClick: () => {
-                        console.log('Selected Hub Name:', hubName);
-                        // Default dialog progression should occur unless this function returns false or prevents default.
-                    },
-                }}
+                // Removed custom nextButtonProps from here to restore default navigation
             />
             <DialogStep
                 id="bootloader"
