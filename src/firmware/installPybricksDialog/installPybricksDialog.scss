@@ -97,3 +97,20 @@
     text-align: center; // Center the text
     width: 100%; // Ensure it takes full width for centering
 }
+
+// Styles to hide non-Technic hubs and the "other hubs" button
+.pb-firmware-installPybricksDialog-body {
+    .pb-hub-picker {
+        // Hide all radio button labels by default.
+        // Blueprint's Radio component renders as a <label class="bpX-control bpX-radio">.
+        > .#{bp.$ns}-control.#{bp.$ns}-radio {
+            display: none !important;
+        }
+
+        // Show only the Technic Hub, which is the 3rd radio button.
+        // This relies on the fixed order of Radio components in HubPicker.tsx.
+        > .#{bp.$ns}-control.#{bp.$ns}-radio:nth-child(3) {
+            display: block !important; // Default display for .bpX-control is block.
+        }
+    }
+}

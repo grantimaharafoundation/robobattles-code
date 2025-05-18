@@ -3,11 +3,6 @@
 // based on https://usehooks-ts.com/react-hook/use-fetch
 
 import { FirmwareMetadata, FirmwareReader } from '@pybricks/firmware';
-import cityHubZip from '@pybricks/firmware/build/cityhub.zip';
-import essentialHubZip from '@pybricks/firmware/build/essentialhub.zip';
-import moveHubZip from '@pybricks/firmware/build/movehub.zip';
-import primeHubZip from '@pybricks/firmware/build/primehub.zip';
-import technicHubZip from '@pybricks/firmware/build/technichub.zip';
 import { useEffect, useMemo, useReducer, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { useIsMounted } from 'usehooks-ts';
@@ -37,22 +32,28 @@ type Action =
     | { type: 'fetched'; payload: FirmwareData }
     | { type: 'error'; payload: Error };
 
-const firmwareZipMap = new Map<Hub, string>([
-    [Hub.Move, moveHubZip],
-    [Hub.City, cityHubZip],
-    [Hub.Technic, technicHubZip],
-    [Hub.Prime, primeHubZip],
-    [Hub.Essential, essentialHubZip],
-    [Hub.Inventor, primeHubZip],
+// Maps Hub enum to the expected starting part of the filename in /public/firmware/
+const hubFirmwareFileIdentifierMap = new Map<Hub, string>([
+    [Hub.Move, 'movehub'],
+    [Hub.City, 'cityhub'],
+    [Hub.Technic, 'technichub'],
+    [Hub.Prime, 'primehub'], // Assuming 'primehub' is the identifier for Prime and Inventor
+    [Hub.Essential, 'essentialhub'],
+    [Hub.Inventor, 'primehub'],
 ]);
 
 /**
- * Gets Pybricks firmware .zip file for the specified hub type.
+ * Gets Pybricks firmware .zip file for the specified hub type from the /public/firmware/ directory.
  * @param hubType The hub type.
  * @returns The current state.
  */
 export function useFirmware(hubType: Hub): State {
-    const url = firmwareZipMap.get(hubType);
+    // Construct the URL based on the hubType
+    const fileIdentifier = hubFirmwareFileIdentifierMap.get(hubType);
+    // Assuming a naming convention like 'technichub-firmware.zip'.
+    // A more robust solution might involve listing directory contents or using a manifest file.
+    const url = fileIdentifier ? `/firmware/${fileIdentifier}-firmware.zip` : undefined;
+
     const cache = useRef<Cache>({});
     const isMounted = useIsMounted();
 

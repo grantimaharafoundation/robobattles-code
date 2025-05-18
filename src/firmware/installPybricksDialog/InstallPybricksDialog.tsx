@@ -9,19 +9,17 @@ import {
     Collapse,
     DialogStep,
     FormGroup,
-    Icon,
     MultistepDialog,
     NonIdealState,
     Popover,
     Pre,
     Spinner,
 } from '@blueprintjs/core';
-import { ChevronDown, ChevronRight, Error, Heart } from '@blueprintjs/icons';
+import { ChevronDown, ChevronRight, Error } from '@blueprintjs/icons';
 import { FirmwareMetadata, HubType } from '@pybricks/firmware';
 import { fileOpen } from 'browser-fs-access';
 import classNames from 'classnames';
 import React, { useCallback, useState } from 'react';
-import { VisuallyHidden } from 'react-aria';
 import { useDropzone } from 'react-dropzone';
 import { useDispatch } from 'react-redux';
 import { useLocalStorage } from 'usehooks-ts';
@@ -34,7 +32,7 @@ import {
 } from '../../app/constants';
 import { Hub, hubBootloaderType } from '../../components/hubPicker';
 import { HubPicker } from '../../components/hubPicker/HubPicker';
-import { useHubPickerSelectedHub } from '../../components/hubPicker/hooks';
+//import { useHubPickerSelectedHub } from '../../components/hubPicker/hooks';
 import { useSelector } from '../../reducers';
 import { ensureError } from '../../utils';
 import BootloaderInstructions from '../bootloaderInstructions/BootloaderInstructions';
@@ -162,63 +160,6 @@ const UnsupportedHubs: React.FunctionComponent = () => {
                     },
                 )}
             </p>
-            <p>
-                {i18n.translate(
-                    'selectHubPanel.notOnListButton.info.mindstorms.help.message',
-                    {
-                        sponsor: (
-                            <>
-                                <VisuallyHidden elementType="span">
-                                    {i18n.translate(
-                                        'selectHubPanel.notOnListButton.info.mindstorms.help.sponsor',
-                                    )}
-                                </VisuallyHidden>
-                                <Icon icon={<Heart />} />
-                            </>
-                        ),
-                    },
-                )}
-            </p>
-            <ul>
-                <li>
-                    {i18n.translate(
-                        'selectHubPanel.notOnListButton.info.mindstorms.rcx',
-                    )}
-                </li>
-                <li>
-                    {i18n.translate(
-                        'selectHubPanel.notOnListButton.info.mindstorms.nxt',
-                    )}
-                </li>
-                <li>
-                    {i18n.translate(
-                        'selectHubPanel.notOnListButton.info.mindstorms.ev3',
-                    )}
-                </li>
-            </ul>
-            <h4>
-                {i18n.translate('selectHubPanel.notOnListButton.info.poweredUp.title')}
-            </h4>
-            <p>
-                {i18n.translate('selectHubPanel.notOnListButton.info.poweredUp.intro')}
-            </p>
-            <ul>
-                <li>
-                    {i18n.translate(
-                        'selectHubPanel.notOnListButton.info.poweredUp.wedo2',
-                    )}
-                </li>
-                <li>
-                    {i18n.translate(
-                        'selectHubPanel.notOnListButton.info.poweredUp.duploTrain',
-                    )}
-                </li>
-                <li>
-                    {i18n.translate(
-                        'selectHubPanel.notOnListButton.info.poweredUp.mario',
-                    )}
-                </li>
-            </ul>
         </div>
     );
 };
@@ -577,18 +518,28 @@ export const InstallPybricksDialog: React.FunctionComponent = () => {
         defaultColor2,
     );
     const [licenseAccepted, setLicenseAccepted] = useState(false);
-    const [hubType] = useHubPickerSelectedHub();
+    // Default to Technic Hub and manage hubType state locally
+    const [hubType] = useState<Hub>(Hub.Technic);
+    // The useHubPickerSelectedHub hook is no longer the primary source for hubType
+    // const [pickerHubType] = useHubPickerSelectedHub(); // Keep if SelectHubPanel is conditionally rendered
+
+    // Firmware loading will be adjusted in useFirmware hook later.
+    // For now, ensure it's called with the defaulted hubType.
     const { firmwareData, firmwareError } = useFirmware(hubType);
+
+    // Custom firmware logic is kept but will be mostly unused in the new default flow.
     const [customFirmwareZip, setCustomFirmwareZip] = useState<File>();
     const { isCustomFirmwareRequested, customFirmwareData, customFirmwareError } =
         useCustomFirmware(customFirmwareZip);
     const i18n = useI18n();
 
+    // selectedFirmwareData and selectedHubType will primarily rely on the non-custom flow
     const selectedFirmwareData = isCustomFirmwareRequested
         ? customFirmwareData
         : firmwareData;
+    // selectedHubType should now consistently be Hub.Technic unless custom firmware overrides it
     const selectedHubType = isCustomFirmwareRequested
-        ? getHubTypeFromMetadata(customFirmwareData?.metadata, hubType)
+        ? getHubTypeFromMetadata(customFirmwareData?.metadata, hubType) // Fallback to our default hubType
         : hubType;
 
     const handleStepChange = useCallback(
@@ -602,10 +553,11 @@ export const InstallPybricksDialog: React.FunctionComponent = () => {
 
     return (
         <MultistepDialog
+            initialStepIndex={0} // Start at the license step (index 1, assuming "hub" is 0)
             title={i18n.translate('title')}
             isOpen={isOpen}
             onClose={() => dispatch(firmwareInstallPybricksDialogCancel())}
-            onChange={handleStepChange} // Add the onChange handler here
+            onChange={handleStepChange}
             backButtonProps={{ text: i18n.translate('backButton.label') }}
             nextButtonProps={{ text: i18n.translate('nextButton.label') }}
             finalButtonProps={{
