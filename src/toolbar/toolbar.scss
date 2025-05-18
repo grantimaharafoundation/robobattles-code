@@ -40,3 +40,15 @@
         outline-offset: 4px;
     }
 }
+
+// Custom styles for specific toolbar buttons (Bluetooth and Run/Play)
+#pb-toolbar-bluetooth-button.bp5-intent-primary,
+#pb-toolbar-run-button.bp5-intent-primary {
+    // Apply to normal, hover, active, and .bp5-active states
+    &,
+    &:hover,
+    &:active,
+    &.bp5-active {
+        border-radius: 8px !important; // Set desired border-radius
+    }
+}

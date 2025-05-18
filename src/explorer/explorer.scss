@@ -13,13 +13,13 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 10px;
-        border-bottom: 1px solid bp.$gray5; // Optional: adds a separator line
+        padding-bottom: 6px;
         margin-bottom:6px;
+        margin-top:-2px;
     }
 
     &-logo {
-        height: 40px; // Adjust as needed
+        height: 70px; // Adjust as needed
     }
 
     &-header-toolbar {
