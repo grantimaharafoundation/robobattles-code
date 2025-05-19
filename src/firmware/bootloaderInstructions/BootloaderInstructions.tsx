@@ -184,8 +184,11 @@ const BootloaderInstructions: React.FunctionComponent<BootloaderInstructionsProp
         [i18n, recovery, hubType],
     );
 
-    const bootloaderModeSteps = useMemo(
-        () => (
+    const bootloaderModeSteps = useMemo(() => {
+        const shouldShowConnectSteps =
+            hubHasUSB(hubType) || (!hubHasUSB(hubType) && !recovery);
+
+        return (
             <>
                 {/* City hub has power issues and requires disconnecting motors/sensors */}
                 {hubType === Hub.City && (
@@ -205,6 +208,9 @@ const BootloaderInstructions: React.FunctionComponent<BootloaderInstructionsProp
                 >
                     {i18n.translate('instructionGroup.bootloaderMode.holdButton', {
                         button,
+                        boldDoNotLetGo: (
+                            <strong>Do not let go until we tell you.</strong>
+                        ),
                     })}
                 </li>
 
@@ -255,7 +261,7 @@ const BootloaderInstructions: React.FunctionComponent<BootloaderInstructionsProp
                 )}
 
                 {/* hubs with USB will keep the power on, but other hubs won't */}
-                {recovery || hubHasUSB(hubType) ? (
+                {(recovery || hubHasUSB(hubType)) && (
                     <li
                         className={classNames(
                             activeStep === 'release-button' && 'pb-active-step',
@@ -268,25 +274,53 @@ const BootloaderInstructions: React.FunctionComponent<BootloaderInstructionsProp
                             },
                         )}
                     </li>
-                ) : (
-                    <li
-                        className={classNames(
-                            activeStep === 'keep-holding' && 'pb-active-step',
-                        )}
-                    >
-                        {i18n.translate('instructionGroup.bootloaderMode.keepHolding', {
-                            button,
-                        })}
-                    </li>
+                )}
+
+                {/* Conditionally add connect steps */}
+                {shouldShowConnectSteps && (
+                    <>
+                        <li key="connect-step-1">
+                            {i18n.translate(
+                                'instructionGroup.connect.clickConnectAndFlash',
+                                {
+                                    flashButton: <strong>{flashButtonText}</strong>,
+                                },
+                            )}
+                        </li>
+                        <li key="connect-step-2">
+                            {i18n.translate('instructionGroup.connect.selectDevice', {
+                                deviceName: (
+                                    <strong>
+                                        {bootloaderDeviceNameMap.get(hubType)}
+                                    </strong>
+                                ),
+                                connectButton: (
+                                    <strong>
+                                        {i18n.translate(
+                                            'instructionGroup.connect.connectButton',
+                                        )}
+                                    </strong>
+                                ),
+                            })}
+                        </li>
+                    </>
                 )}
             </>
-        ),
-        [recovery, activeStep, i18n, button, hubType, light, lightPattern],
-    );
+        );
+    }, [
+        recovery,
+        activeStep,
+        i18n,
+        button,
+        hubType,
+        light,
+        lightPattern,
+        flashButtonText,
+    ]);
 
     return (
         <>
-            {process.env.NODE_ENV !== 'test' && (
+            {process.env.NODE_ENV !== 'test' && recovery && (
                 <video
                     controls
                     controlsList="nodownload nofullscreen"
@@ -328,47 +362,7 @@ const BootloaderInstructions: React.FunctionComponent<BootloaderInstructionsProp
             <ol start={countValidChildren(prepareSteps.props.children) + 1}>
                 {bootloaderModeSteps}
             </ol>
-            {(hubHasUSB(hubType) || (!hubHasUSB(hubType) && !recovery)) && (
-                <>
-                    <p>
-                        <strong>
-                            {i18n.translate('instructionGroup.connect.title')}
-                        </strong>
-                    </p>
-                    <ol
-                        start={
-                            countValidChildren(prepareSteps.props.children) +
-                            countValidChildren(bootloaderModeSteps.props.children) +
-                            1
-                        }
-                    >
-                        <li>
-                            {i18n.translate(
-                                'instructionGroup.connect.clickConnectAndFlash',
-                                {
-                                    flashButton: <strong>{flashButtonText}</strong>,
-                                },
-                            )}
-                        </li>
-                        <li>
-                            {i18n.translate('instructionGroup.connect.selectDevice', {
-                                deviceName: (
-                                    <strong>
-                                        {bootloaderDeviceNameMap.get(hubType)}
-                                    </strong>
-                                ),
-                                connectButton: (
-                                    <strong>
-                                        {i18n.translate(
-                                            'instructionGroup.connect.connectButton',
-                                        )}
-                                    </strong>
-                                ),
-                            })}
-                        </li>
-                    </ol>
-                </>
-            )}
+            {/* The separate <ol> for connect steps has been removed as they are now part of bootloaderModeSteps */}
 
             {hubHasUSB(hubType) && isLinux() && (
                 <Callout intent={Intent.WARNING} icon={<WarningSign />}>
