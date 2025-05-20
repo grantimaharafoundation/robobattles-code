@@ -128,7 +128,51 @@ function* handleCompileMulti6(): Generator {
         return;
     }
 
-    const mainPy = yield* editorGetValue();
+    let mainPy = yield* editorGetValue();
+
+    // Inject code to allow missing motors
+    const allowMissingMotorsPy = `
+from pybricks.pupdevices import Motor as _Motor, DCMotor as _DCMotor
+from pybricks.parameters import Direction
+
+# A function or method that just does nothing.
+def do_nothing(*args, **kwargs):
+    return 0
+
+# A class that does nothing and allows any method calls.
+class NoneMotor:
+    def __getattr__(self, name):
+        return do_nothing
+
+# Class like DCMotor, but raises no exception if you
+# call a nonexistent method like run_angle on it.
+class AnyDCMotor(_DCMotor):
+    def __getattr__(self, name):
+        return do_nothing
+
+# Helper function that creates a Motor-like object, but
+# suppresses exceptions about motors not being connected.
+def Motor(port, direction=Direction.CLOCKWISE):
+    try:
+        # Give a normal motor object if such device is connected.
+        return _Motor(port, direction)
+    except OSError:
+        try:
+            # Otherwise return a DC motor if there is one, but allow
+            # and ignore calls to methods that require encoders.
+            return AnyDCMotor(port, direction)
+        except OSError:
+            # If nothing is attached, still succeed and return an object
+            # that just does nothing.
+            return NoneMotor()
+
+# Also allow any-way-around use of the DCMotor class.
+DCMotor = Motor
+
+`;
+
+    // Inject
+    mainPy = allowMissingMotorsPy + mainPy;
 
     const pyFiles = new Map<string, FileContents>([
         ['__main__', { path: metadata.path ?? '__main__.py', contents: mainPy }],
@@ -168,6 +212,10 @@ function* handleCompileMulti6(): Generator {
             // if found, queue the module to be compiled and to be parsed
             // for additional imports
             if (file) {
+                // BEGIN INJECTION
+                const clineInjectionCodeModule = '_pybricks_runtime_busy_wait_time = 0\nprint("Code injected by Cline in module!")\n# Your original module script starts below\n';
+                file.contents = clineInjectionCodeModule + file.contents;
+                // END INJECTION
                 pyFiles.set(m, file);
                 uncheckedScripts.push(file.contents);
             }
