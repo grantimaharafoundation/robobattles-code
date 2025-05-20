@@ -212,10 +212,6 @@ DCMotor = Motor
             // if found, queue the module to be compiled and to be parsed
             // for additional imports
             if (file) {
-                // BEGIN INJECTION
-                const clineInjectionCodeModule = '_pybricks_runtime_busy_wait_time = 0\nprint("Code injected by Cline in module!")\n# Your original module script starts below\n';
-                file.contents = clineInjectionCodeModule + file.contents;
-                // END INJECTION
                 pyFiles.set(m, file);
                 uncheckedScripts.push(file.contents);
             }
