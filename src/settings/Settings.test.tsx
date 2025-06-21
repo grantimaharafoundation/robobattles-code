@@ -51,7 +51,7 @@ describe('firmware', () => {
         const [user, settings, dispatch] = testRender(<Settings />);
 
         const button = settings.getByRole('button', {
-            name: 'Install Bot Battles Firmware',
+            name: 'Install RoboBattles Firmware',
         });
         await act(() => user.click(button));
 

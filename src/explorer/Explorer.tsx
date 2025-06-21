@@ -205,8 +205,8 @@ const Header: React.FunctionComponent = () => {
         <>
             <div className="pb-explorer-banner">
                 <img
-                    src="bot-battles-logo.png"
-                    alt="Bot Battles Logo"
+                    src="robobattles-logo.png"
+                    alt="RoboBattles Logo"
                     className="pb-explorer-logo"
                 />
             </div>

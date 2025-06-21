@@ -1,5 +1,5 @@
 {
-    "title": "Install Bot Battles Firmware",
+    "title": "Install RoboBattles Firmware",
     "selectHubPanel": {
         "title": "Select hub type",
         "message": "Select your hub.",
@@ -7,8 +7,8 @@
             "label": "What about other hubs?",
             "info": {
                 "mindstorms": {
-                    "title": "Bot Battles Firmware",
-                    "intro": "Bot Battles does not currently offer firmware for other LEGO® hubs. Support for the Large Spike™ Prime hub may be available in the future."
+                    "title": "RoboBattles Firmware",
+                    "intro": "RoboBattles does not currently offer firmware for other LEGO® hubs. Support for the Large Spike™ Prime hub may be available in the future."
                 }
             }
         },
