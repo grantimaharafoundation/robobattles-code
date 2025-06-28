@@ -6,6 +6,7 @@
 import { AnyAction } from 'redux';
 import {
     actionChannel,
+    delay,
     fork,
     put,
     race,
@@ -104,16 +105,46 @@ function* encodeRequest(): Generator {
             continue;
         }
 
-        const { failedToSend } = yield* race({
+        const { failedToSend, timeout } = yield* race({
             sent: take(didWriteCommand),
             failedToSend: take(didFailToWriteCommand),
+            timeout: delay(1000),
         });
 
         if (failedToSend) {
             yield* put(didFailToSendCommand(action.id, failedToSend.error));
-        } else {
-            yield* put(didSendCommand(action.id));
+            continue;
         }
+
+        if (timeout) {
+            yield* put(
+                didFailToSendCommand(action.id, new Error('write operation timed out')),
+            );
+            continue;
+        }
+
+        const { status, failed } = yield* race({
+            status: take(didReceiveStatusReport),
+            failed: take(didFailToSendCommand),
+            timeout: delay(1000),
+        });
+
+        if (failed) {
+            yield* put(didFailToSendCommand(action.id, failed.error));
+            continue;
+        }
+
+        if (!status) {
+            yield* put(
+                didFailToSendCommand(
+                    action.id,
+                    new Error('did not receive status report'),
+                ),
+            );
+            continue;
+        }
+
+        yield* put(didSendCommand(action.id));
     }
 }
 
