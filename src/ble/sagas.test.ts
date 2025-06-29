@@ -2,6 +2,7 @@
 // Copyright (c) 2022-2023 The Pybricks Authors
 
 import { MockProxy, mock } from 'jest-mock-extended';
+import JSZip from 'jszip';
 import { AsyncSaga } from '../../test';
 import { alertsDidShowAlert, alertsShowAlert } from '../alerts/actions';
 import {
@@ -69,6 +70,20 @@ type Mocks = {
  * Creates mocks used in connect tests.
  */
 function createMocks(): Mocks {
+    global.fetch = jest.fn(() =>
+        Promise.resolve({
+            blob: () =>
+                new JSZip()
+                    .file(
+                        'firmware.metadata.json',
+                        JSON.stringify({
+                            'firmware-version': '3.2.0b2',
+                        }),
+                    )
+                    .generateAsync({ type: 'blob' }),
+        }),
+    ) as jest.Mock;
+
     const firmwareRevisionChar = mock<BluetoothRemoteGATTCharacteristic>();
     firmwareRevisionChar.readValue.mockResolvedValue(
         new DataView(encoder.encode('3.2.0b2').buffer),
@@ -220,49 +235,52 @@ const defaultPnpId: PnpId = {
  * @param point The point at which to stop running.
  */
 async function runConnectUntil(saga: AsyncSaga, point: ConnectRunPoint): Promise<void> {
-    saga.put(bleConnectPybricks());
+    try {
+        saga.put(bleConnectPybricks());
 
-    if (point === ConnectRunPoint.Connect) {
-        return;
+        if (point === ConnectRunPoint.Connect) {
+            return;
+        }
+
+        await expect(saga.take()).resolves.toEqual(
+            bleDIServiceDidReceiveFirmwareRevision('3.2.0b2'),
+        );
+
+        if (point === ConnectRunPoint.DidReceiveFirmwareRevision) {
+            return;
+        }
+
+        await expect(saga.take()).resolves.toEqual(
+            bleDIServiceDidReceiveSoftwareRevision('1.1.0'),
+        );
+
+        if (point === ConnectRunPoint.DidReceiveSoftwareRevision) {
+            return;
+        }
+
+        await expect(saga.take()).resolves.toEqual(
+            bleDIServiceDidReceivePnPId(defaultPnpId),
+        );
+
+        if (point === ConnectRunPoint.DidReceivePnpId) {
+            return;
+        }
+
+        await expect(saga.take()).resolves.toEqual(
+            blePybricksServiceDidNotReceiveHubCapabilities(defaultPnpId, '3.2.0b2'),
+        );
+
+        if (point === ConnectRunPoint.DidNotReceiveHubCapabilities) {
+            return;
+        }
+
+        await expect(saga.take()).resolves.toEqual(
+            bleDidConnectPybricks('test-id', 'test name'),
+        );
+    } catch (err) {
+        console.error('runConnectUntil failed', err);
+        throw err;
     }
-
-    await expect(saga.take()).resolves.toEqual(
-        bleDIServiceDidReceiveFirmwareRevision('3.2.0b2'),
-    );
-
-    await expect(saga.take()).resolves.toEqual(alertsShowAlert('ble', 'oldFirmware'));
-
-    if (point === ConnectRunPoint.DidReceiveFirmwareRevision) {
-        return;
-    }
-
-    await expect(saga.take()).resolves.toEqual(
-        bleDIServiceDidReceiveSoftwareRevision('1.1.0'),
-    );
-
-    if (point === ConnectRunPoint.DidReceiveSoftwareRevision) {
-        return;
-    }
-
-    await expect(saga.take()).resolves.toEqual(
-        bleDIServiceDidReceivePnPId(defaultPnpId),
-    );
-
-    if (point === ConnectRunPoint.DidReceivePnpId) {
-        return;
-    }
-
-    await expect(saga.take()).resolves.toEqual(
-        blePybricksServiceDidNotReceiveHubCapabilities(defaultPnpId, '3.2.0b2'),
-    );
-
-    if (point === ConnectRunPoint.DidNotReceiveHubCapabilities) {
-        return;
-    }
-
-    await expect(saga.take()).resolves.toEqual(
-        bleDidConnectPybricks('test-id', 'test name'),
-    );
 }
 
 describe('connect action is dispatched', () => {
