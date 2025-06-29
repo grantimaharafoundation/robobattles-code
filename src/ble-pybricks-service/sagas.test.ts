@@ -126,7 +126,9 @@ describe('command encoder', () => {
 
         // but only two didSendCommand actions meaning only the first two completed
         saga.put(didWriteCommand(0));
+        saga.put(didReceiveStatusReport(0, 0));
         saga.put(didWriteCommand(1));
+        saga.put(didReceiveStatusReport(0, 0));
 
         // So only 3 commands were actually sent and two didSendCommand were
         // dispatched (making 5 total dispatches). The last request is still
