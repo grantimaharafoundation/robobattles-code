@@ -52,7 +52,9 @@ export function useFirmware(hubType: Hub): State {
     const fileIdentifier = hubFirmwareFileIdentifierMap.get(hubType);
     // Assuming a naming convention like 'technichub-firmware.zip'.
     // A more robust solution might involve listing directory contents or using a manifest file.
-    const url = fileIdentifier ? `/firmware/${fileIdentifier}-firmware.zip` : undefined;
+    const url = fileIdentifier
+        ? `/firmware/pybricks-technichub-v13.0.2.zip`
+        : undefined;
 
     const cache = useRef<Cache>({});
     const isMounted = useIsMounted();

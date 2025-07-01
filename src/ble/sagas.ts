@@ -229,7 +229,7 @@ function* handleBleConnectPybricks(): Generator {
         );
         yield* put(bleDIServiceDidReceiveFirmwareRevision(firmwareRevision));
 
-        const response = yield* call(fetch, 'firmware/technichub-firmware.zip');
+        const response = yield* call(fetch, 'firmware/pybricks-technichub-v13.0.2.zip');
         const blob = yield* call(() => response.blob());
         const zip = yield* call(() => JSZip.loadAsync(blob));
         const metadataFile = zip.file('firmware.metadata.json');
