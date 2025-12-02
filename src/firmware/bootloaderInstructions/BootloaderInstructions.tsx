@@ -51,14 +51,14 @@ type BootloaderInstructionsProps = {
     flashButtonText: string;
 };
 
-const bootloaderDeviceNameMap: ReadonlyMap<Hub, string> = new Map([
+/*const bootloaderDeviceNameMap: ReadonlyMap<Hub, string> = new Map([
     [Hub.City, 'LEGO Bootloader'],
     [Hub.Essential, 'LEGO Technic Small Hub in DFU Mode'],
     [Hub.Inventor, 'LEGO Technic Large Hub in DFU Mode'],
     [Hub.Move, 'LEGO Bootloader'],
     [Hub.Prime, 'LEGO Technic Large Hub in DFU Mode'],
     [Hub.Technic, 'LEGO Bootloader'],
-]);
+]);*/
 
 const videoFileMap: ReadonlyMap<Hub, string> = new Map([
     [Hub.City, cityHubMp4],
