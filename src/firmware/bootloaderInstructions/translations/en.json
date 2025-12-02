@@ -40,8 +40,8 @@
         },
         "connect": {
             "title": "Install:",
-            "clickConnectAndFlash": "Click the {flashButton} button below.",
-            "selectDevice": "In the pop-up window, select {deviceName} and click {connectButton}.",
+            "clickConnectAndFlash": "Click the {flashButton} button below. A popup will appear: click {deviceName}, then click {connectButton}.",
+            "selectDevice": "",
             "connectButton": "Pair"
         }
     }

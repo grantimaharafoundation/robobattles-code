@@ -287,22 +287,6 @@ const BootloaderInstructions: React.FunctionComponent<BootloaderInstructionsProp
                                 },
                             )}
                         </li>
-                        <li key="connect-step-2">
-                            {i18n.translate('instructionGroup.connect.selectDevice', {
-                                deviceName: (
-                                    <strong>
-                                        {bootloaderDeviceNameMap.get(hubType)}
-                                    </strong>
-                                ),
-                                connectButton: (
-                                    <strong>
-                                        {i18n.translate(
-                                            'instructionGroup.connect.connectButton',
-                                        )}
-                                    </strong>
-                                ),
-                            })}
-                        </li>
                     </>
                 )}
             </>
