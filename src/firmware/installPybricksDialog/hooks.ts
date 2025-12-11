@@ -37,7 +37,7 @@ const hubFirmwareFileIdentifierMap = new Map<Hub, string>([
     [Hub.Move, 'movehub'],
     [Hub.City, 'cityhub'],
     [Hub.Technic, 'technichub'],
-    [Hub.Prime, 'primehub'], // Assuming 'primehub' is the identifier for Prime and Inventor
+    [Hub.Prime, 'primehub'],
     [Hub.Essential, 'essentialhub'],
     [Hub.Inventor, 'primehub'],
 ]);
@@ -48,12 +48,9 @@ const hubFirmwareFileIdentifierMap = new Map<Hub, string>([
  * @returns The current state.
  */
 export function useFirmware(hubType: Hub): State {
-    // Construct the URL based on the hubType
     const fileIdentifier = hubFirmwareFileIdentifierMap.get(hubType);
-    // Assuming a naming convention like 'technichub-firmware.zip'.
-    // A more robust solution might involve listing directory contents or using a manifest file.
     const url = fileIdentifier
-        ? `/firmware/pybricks-technichub-v13.0.2.zip`
+        ? `/firmware/pybricks-${fileIdentifier}-v13.0.2.zip`
         : undefined;
 
     const cache = useRef<Cache>({});

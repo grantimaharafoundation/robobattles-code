@@ -107,9 +107,10 @@
             display: none !important;
         }
 
-        // Show only the Technic Hub, which is the 3rd radio button.
-        // This relies on the fixed order of Radio components in HubPicker.tsx.
-        > .#{bp.$ns}-control.#{bp.$ns}-radio:nth-child(3) {
+        // Show the Technic (3rd) and Prime (4th) Hubs. This relies on the fixed
+        // order of Radio components in HubPicker.tsx.
+        > .#{bp.$ns}-control.#{bp.$ns}-radio:nth-child(3),
+        > .#{bp.$ns}-control.#{bp.$ns}-radio:nth-child(4) {
             display: block !important; // Default display for .bpX-control is block.
         }
     }

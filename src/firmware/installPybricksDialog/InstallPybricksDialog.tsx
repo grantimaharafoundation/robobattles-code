@@ -32,7 +32,7 @@ import {
 } from '../../app/constants';
 import { Hub, hubBootloaderType } from '../../components/hubPicker';
 import { HubPicker } from '../../components/hubPicker/HubPicker';
-//import { useHubPickerSelectedHub } from '../../components/hubPicker/hooks';
+import { useHubPickerSelectedHub } from '../../components/hubPicker/hooks';
 import { useSelector } from '../../reducers';
 import { ensureError } from '../../utils';
 import BootloaderInstructions from '../bootloaderInstructions/BootloaderInstructions';
@@ -520,29 +520,18 @@ export const InstallPybricksDialog: React.FunctionComponent = () => {
         defaultColor2,
     );
     const [licenseAccepted, setLicenseAccepted] = useState(false);
-    // Default to Technic Hub and manage hubType state locally
-    const [hubType] = useState<Hub>(Hub.Technic); // This will be used for the HubPicker initial value
-
-    // The useHubPickerSelectedHub hook is no longer the primary source for hubType
-    // const [pickerHubType] = useHubPickerSelectedHub(); // Keep if SelectHubPanel is conditionally rendered
-
-    // Firmware loading will be adjusted in useFirmware hook later.
-    // For now, ensure it's called with the defaulted hubType.
+    const [hubType] = useHubPickerSelectedHub();
     const { firmwareData, firmwareError } = useFirmware(hubType);
-
-    // Custom firmware logic is kept but will be mostly unused in the new default flow.
     const [customFirmwareZip, setCustomFirmwareZip] = useState<File>();
     const { isCustomFirmwareRequested, customFirmwareData, customFirmwareError } =
         useCustomFirmware(customFirmwareZip);
     const i18n = useI18n();
 
-    // selectedFirmwareData and selectedHubType will primarily rely on the non-custom flow
     const selectedFirmwareData = isCustomFirmwareRequested
         ? customFirmwareData
         : firmwareData;
-    // selectedHubType should now consistently be Hub.Technic unless custom firmware overrides it
     const selectedHubType = isCustomFirmwareRequested
-        ? getHubTypeFromMetadata(customFirmwareData?.metadata, hubType) // Fallback to our default hubType
+        ? getHubTypeFromMetadata(customFirmwareData?.metadata, hubType)
         : hubType;
 
     const handleStepChange = useCallback(
