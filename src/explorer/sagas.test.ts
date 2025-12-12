@@ -607,7 +607,11 @@ describe('handleExplorerCreateNewFile', () => {
 
         saga.put(explorerCreateNewFile());
 
-        const writeFileActionDefault = (await saga.take()) as { type: string; path: string; contents: string };
+        const writeFileActionDefault = (await saga.take()) as {
+            type: string;
+            path: string;
+            contents: string;
+        };
         const sampleWriteAction = fileStorageWriteFile('dummy', 'dummy');
         expect(writeFileActionDefault.type).toBe(sampleWriteAction.type);
         const expectedDefaultFileName = `my_file${pythonFileExtension}`;
@@ -619,7 +623,9 @@ describe('handleExplorerCreateNewFile', () => {
             fileStorageDidWriteFile(writeFileActionDefault.path, newFileUuidDefault),
         );
 
-        await expect(saga.take()).resolves.toEqual(editorActivateFile(newFileUuidDefault));
+        await expect(saga.take()).resolves.toEqual(
+            editorActivateFile(newFileUuidDefault),
+        );
         await expect(saga.take()).resolves.toEqual(explorerDidCreateNewFile());
 
         await saga.end();
@@ -639,7 +645,11 @@ describe('handleExplorerCreateNewFile', () => {
         saga.put(explorerCreateNewFile());
 
         const expectedIncrementedFileName = `my_file_2${pythonFileExtension}`;
-        const writeFileActionIncremented = (await saga.take()) as { type: string; path: string; contents: string };
+        const writeFileActionIncremented = (await saga.take()) as {
+            type: string;
+            path: string;
+            contents: string;
+        };
         const sampleWriteActionInc = fileStorageWriteFile('dummy', 'dummy');
         expect(writeFileActionIncremented.type).toBe(sampleWriteActionInc.type);
         expect(writeFileActionIncremented.path).toBe(expectedIncrementedFileName);
@@ -653,7 +663,9 @@ describe('handleExplorerCreateNewFile', () => {
             ),
         );
 
-        await expect(saga.take()).resolves.toEqual(editorActivateFile(newFileUuidIncremented));
+        await expect(saga.take()).resolves.toEqual(
+            editorActivateFile(newFileUuidIncremented),
+        );
         await expect(saga.take()).resolves.toEqual(explorerDidCreateNewFile());
 
         await saga.end();
@@ -667,7 +679,11 @@ describe('handleExplorerCreateNewFile', () => {
 
         saga.put(explorerCreateNewFile());
 
-        const writeFileActionFailed = (await saga.take()) as { type: string; path: string; contents: string };
+        const writeFileActionFailed = (await saga.take()) as {
+            type: string;
+            path: string;
+            contents: string;
+        };
         const sampleWriteActionFail = fileStorageWriteFile('dummy', 'dummy');
         expect(writeFileActionFailed.type).toBe(sampleWriteActionFail.type);
         // Path will be my_file.py as it's the first attempt in this test case
@@ -675,7 +691,10 @@ describe('handleExplorerCreateNewFile', () => {
         expect(typeof writeFileActionFailed.contents).toBe('string');
 
         // Explicitly use the imported action creator
-        const failAction = importedFileStorageDidFailToWriteFile(writeFileActionFailed.path, testError);
+        const failAction = importedFileStorageDidFailToWriteFile(
+            writeFileActionFailed.path,
+            testError,
+        );
         saga.put(failAction);
 
         await expect(saga.take()).resolves.toEqual(

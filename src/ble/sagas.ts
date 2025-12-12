@@ -6,7 +6,6 @@
 // TODO: this file needs to be combined with the firmware BLE connection management
 // to reduce duplicated code
 
-import JSZip from 'jszip';
 import { Task, buffers, eventChannel } from 'redux-saga';
 import * as semver from 'semver';
 import {
@@ -58,6 +57,7 @@ import {
     pybricksServiceUUID,
 } from '../ble-pybricks-service/protocol';
 import { firmwareInstallPybricks } from '../firmware/actions';
+import manifest from '../firmware/manifest.json';
 import { RootState } from '../reducers';
 import { ensureError } from '../utils';
 import { isLinux } from '../utils/os';
@@ -229,44 +229,33 @@ function* handleBleConnectPybricks(): Generator {
         );
         yield* put(bleDIServiceDidReceiveFirmwareRevision(firmwareRevision));
 
-        const response = yield* call(fetch, 'firmware/pybricks-technichub-v13.0.2.zip');
-        const blob = yield* call(() => response.blob());
-        const zip = yield* call(() => JSZip.loadAsync(blob));
-        const metadataFile = zip.file('firmware.metadata.json');
+        const ffv = manifest.firmwareVersion.replace(/^v/, '');
 
-        if (metadataFile) {
-            const latestFirmwareVersion = JSON.parse(
-                yield* call(() => metadataFile.async('string')),
-            )['firmware-version'];
+        console.log('hub firmware version', firmwareRevision);
+        console.log('manifest firmware version', ffv);
 
-            const ffv = latestFirmwareVersion.split('-v').pop() ?? '0.0.0';
+        // notify user if old firmware
+        if (firmwareRevision !== ffv) {
+            yield* put(alertsShowAlert('ble', 'oldFirmware'));
 
-            console.log('hub firmware version', firmwareRevision);
-            console.log('zip firmware version', ffv);
+            // initiate flashing firmware if user requested
+            const flashIfRequested = function* () {
+                const { action } = yield* take<
+                    ReturnType<typeof alertsDidShowAlert<'ble', 'oldFirmware'>>
+                >(
+                    alertsDidShowAlert.when(
+                        (a) => a.domain === 'ble' && a.specific === 'oldFirmware',
+                    ),
+                );
 
-            // notify user if old firmware
-            if (firmwareRevision !== ffv) {
-                yield* put(alertsShowAlert('ble', 'oldFirmware'));
+                if (action === 'flashFirmware') {
+                    yield* put(firmwareInstallPybricks());
+                }
+            };
 
-                // initiate flashing firmware if user requested
-                const flashIfRequested = function* () {
-                    const { action } = yield* take<
-                        ReturnType<typeof alertsDidShowAlert<'ble', 'oldFirmware'>>
-                    >(
-                        alertsDidShowAlert.when(
-                            (a) => a.domain === 'ble' && a.specific === 'oldFirmware',
-                        ),
-                    );
-
-                    if (action === 'flashFirmware') {
-                        yield* put(firmwareInstallPybricks());
-                    }
-                };
-
-                // have to spawn so that we don't block the task and it still works
-                // if parent task ends
-                yield* spawn(flashIfRequested);
-            }
+            // have to spawn so that we don't block the task and it still works
+            // if parent task ends
+            yield* spawn(flashIfRequested);
         }
 
         const softwareVersionChar = yield* call(() =>
