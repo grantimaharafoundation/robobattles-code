@@ -229,13 +229,13 @@ function* handleBleConnectPybricks(): Generator {
         );
         yield* put(bleDIServiceDidReceiveFirmwareRevision(firmwareRevision));
 
-        const ffv = manifest.firmwareVersion.replace(/^v/, '');
+        const ffv = manifest.firmwareVersionMinimum.replace(/^v/, '');
 
         console.log('hub firmware version', firmwareRevision);
         console.log('manifest firmware version', ffv);
 
         // notify user if old firmware
-        if (firmwareRevision !== ffv) {
+        if (semver.lt(firmwareRevision, ffv)) {
             yield* put(alertsShowAlert('ble', 'oldFirmware'));
 
             // initiate flashing firmware if user requested
