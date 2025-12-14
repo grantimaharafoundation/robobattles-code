@@ -9,7 +9,6 @@ import { useIsMounted } from 'usehooks-ts';
 import { alertsShowAlert } from '../../alerts/actions';
 import { Hub } from '../../components/hubPicker';
 import { ensureError } from '../../utils';
-import manifest from '../manifest.json';
 import { validateMetadata } from './';
 
 export type FirmwareData = {
@@ -36,7 +35,7 @@ type Action =
 const firmwareZipMap = new Map<Hub, string>([
     [Hub.Technic, `/firmware/technichub.zip`],
     [Hub.Prime, `/firmware/primehub.zip`],
-    [Hub.Inventor, `/firmware/primehub.zip`]
+    [Hub.Inventor, `/firmware/primehub.zip`],
 ]);
 
 /**
