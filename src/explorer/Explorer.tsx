@@ -9,12 +9,10 @@ import {
     ButtonGroup,
     Classes,
     Divider,
-    //FormGroup,
     HotkeyConfig,
     useHotkeys,
 } from '@blueprintjs/core';
 import {
-    //Archive,
     Document,
     Download, // Added for firmware buttons
     Duplicate,
@@ -31,7 +29,6 @@ import React, {
     useRef,
     useState,
 } from 'react';
-// Removed line: import { Button as BlueprintButton } from '@blueprintjs/core';
 import { useId } from 'react-aria';
 import {
     ControlledTreeEnvironment,

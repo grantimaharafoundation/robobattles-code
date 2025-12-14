@@ -9,7 +9,7 @@
         min-height: bp.$pt-grid-size * 40;
         display: flex;
         flex-direction: column;
-        align-items: center; // Changed from flex-start to center
+        align-items: center;
         gap: bp.$pt-grid-size;
     }
 

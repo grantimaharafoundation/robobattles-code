@@ -29,7 +29,6 @@ import {
     fileStorageDidFailToDumpAllFiles,
     fileStorageDidFailToReadFile,
     fileStorageDidFailToRenameFile,
-    // fileStorageDidFailToWriteFile, // Will be imported with an alias
     fileStorageDidReadFile,
     fileStorageDidRenameFile,
     fileStorageDidWriteFile,
