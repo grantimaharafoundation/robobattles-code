@@ -33,16 +33,11 @@ type Action =
     | { type: 'fetched'; payload: FirmwareData }
     | { type: 'error'; payload: Error };
 
-const firmwareZipMap = new Map<Hub, string>();
-
-if (manifest.technichub) {
-    firmwareZipMap.set(Hub.Technic, `/firmware/${manifest.technichub}`);
-}
-
-if (manifest.primehub) {
-    firmwareZipMap.set(Hub.Prime, `/firmware/${manifest.primehub}`);
-    firmwareZipMap.set(Hub.Inventor, `/firmware/${manifest.primehub}`);
-}
+const firmwareZipMap = new Map<Hub, string>([
+    [Hub.Technic, `/firmware/technichub.zip`],
+    [Hub.Prime, `/firmware/primehub.zip`],
+    [Hub.Inventor, `/firmware/primehub.zip`]
+]);
 
 /**
  * Gets Pybricks firmware .zip file for the specified hub type.
