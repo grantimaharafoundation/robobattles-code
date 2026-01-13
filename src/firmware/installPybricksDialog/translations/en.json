@@ -41,15 +41,6 @@
             "labelInfo": "(optional)",
             "help": "Choose a Bluetooth name for your hub. If you have more than one hub, this makes it easy to tell them apart when you connect.",
             "error": "The name is too long."
-        },
-        "selectHubLightColor": {
-            "label": "Select your hub's light colors. If you have multiple hubs, choose different color combinations to tell them apart."
-        },
-        "color1": {
-            "label": "Color 1"
-        },
-        "color2": {
-            "label": "Color 2"
         }
     },
     "bootloaderPanel": {

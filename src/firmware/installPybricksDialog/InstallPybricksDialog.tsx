@@ -7,8 +7,12 @@ import {
     Checkbox,
     Classes,
     Collapse,
+    ControlGroup,
     DialogStep,
     FormGroup,
+    Icon,
+    InputGroup,
+    Intent,
     MultistepDialog,
     NonIdealState,
     Popover,
@@ -42,59 +46,7 @@ import {
 } from './actions';
 import { FirmwareData, useCustomFirmware, useFirmware } from './hooks';
 import { useI18n } from './i18n';
-
-const AppColors = {
-    White: { h: 0, s: 0, v: 100 },
-    Red: { h: 0, s: 90, v: 100 },
-    Orang: { h: 30, s: 90, v: 100 },
-    Yellw: { h: 60, s: 90, v: 100 },
-    Green: { h: 130, s: 90, v: 100 },
-    Blue: { h: 240, s: 90, v: 100 },
-    Pink: { h: 300, s: 90, v: 100 }, // Using "pink" as the key for Magenta
-} as const;
-
-type AppColorName = keyof typeof AppColors;
-
-const ColorOptionsArray: AppColorName[] = Object.keys(AppColors) as AppColorName[];
-
-// HSV to HSL conversion function (for CSS)
-function hsvToHsl(
-    h_in: number,
-    s_in: number,
-    v_in: number,
-): { h: number; s: number; l: number } {
-    const h = Number(h_in);
-    const s_norm = Number(s_in) / 100; // s_in is 0-100, s_norm is 0-1
-    const v_norm = Number(v_in) / 100; // v_in is 0-100, v_norm is 0-1
-
-    let l_norm: number; // Lightness, 0-1
-    let s_hsl_norm: number; // Saturation for HSL, 0-1
-
-    if (s_norm === 0) {
-        // Achromatic case (gray, white, black)
-        l_norm = v_norm;
-        s_hsl_norm = 0;
-    } else {
-        // Chromatic case
-        l_norm = v_norm * (1 - s_norm / 2);
-        if (l_norm === 0 || l_norm === 1) {
-            // Black or white due to extreme lightness/darkness with some saturation
-            s_hsl_norm = 0;
-        } else {
-            s_hsl_norm = (v_norm - l_norm) / Math.min(l_norm, 1 - l_norm);
-        }
-    }
-
-    return {
-        h: h,
-        s: s_hsl_norm * 100, // Convert back to 0-100
-        l: l_norm * 100, // Convert back to 0-100
-    };
-}
-
-const getColorDisplayName = (color: AppColorName): string => {
-    return color.charAt(0).toUpperCase() + color.slice(1);
-};
+import { validateHubName } from '.';
 
 const dialogBody = classNames(
     Classes.DIALOG_BODY,
@@ -374,107 +326,42 @@ type SelectOptionsPanelProps = {
     hubName: string;
     metadata: FirmwareMetadata | undefined;
     onChangeHubName(hubName: string): void;
-    selectedColor1: AppColorName | undefined;
-    onChangeColor1: (color: AppColorName) => void;
-    selectedColor2: AppColorName | undefined;
-    onChangeColor2: (color: AppColorName) => void;
 };
 
 const ConfigureOptionsPanel: React.FunctionComponent<SelectOptionsPanelProps> = ({
-    hubName: _hubName,
-    metadata: _metadata,
+    hubName,
+    metadata,
     onChangeHubName,
-    selectedColor1,
-    onChangeColor1,
-    selectedColor2,
-    onChangeColor2,
 }) => {
     const i18n = useI18n();
-
-    const handleColor1Select = (color: AppColorName) => {
-        onChangeColor1(color);
-        const newHubName = `Hub ${color}/${selectedColor2 ?? ColorOptionsArray[0]}`;
-        onChangeHubName(newHubName);
-    };
-
-    const handleColor2Select = (color: AppColorName) => {
-        onChangeColor2(color);
-        const newHubName = `Hub ${selectedColor1 ?? ColorOptionsArray[0]}/${color}`;
-        onChangeHubName(newHubName);
-    };
+    const isHubNameValid = metadata ? validateHubName(hubName, metadata) : true;
 
     return (
         <div className={dialogBody}>
-            <p className="pb-select-hub-light-color-label">
-                {i18n.translate('optionsPanel.selectHubLightColor.label')}
-            </p>
             <FormGroup
-                label={i18n.translate('optionsPanel.color1.label')}
-                className="pb-color-picker-form-group pb-color-picker-label-normal"
+                label={i18n.translate('optionsPanel.hubName.label')}
+                labelInfo={i18n.translate('optionsPanel.hubName.labelInfo')}
             >
-                <div className="pb-color-picker-row">
-                    {ColorOptionsArray.map((color) => {
-                        const isSelected = selectedColor1 === color;
-                        const colorHsv = AppColors[color];
-                        const colorHsl = hsvToHsl(colorHsv.h, colorHsv.s, colorHsv.v);
-                        return (
-                            <Button
-                                key={`row1-${color}`}
-                                className={classNames('pb-color-button', {
-                                    'pb-color-selected': isSelected,
-                                })}
-                                onClick={() => handleColor1Select(color)}
-                                aria-label={`Select ${getColorDisplayName(
-                                    color,
-                                )} for Color 1`}
-                                minimal={true}
-                                text=""
-                                style={{
-                                    backgroundColor: `hsl(${colorHsl.h}, ${colorHsl.s}%, ${colorHsl.l}%)`,
-                                }}
-                                title={getColorDisplayName(color)}
-                            />
-                        );
-                    })}
-                </div>
+                <ControlGroup>
+                    <InputGroup
+                        value={hubName}
+                        onChange={(e) => onChangeHubName(e.currentTarget.value)}
+                        onMouseOver={(e) => e.preventDefault()}
+                        onMouseDown={(e) => e.stopPropagation()}
+                        intent={isHubNameValid ? Intent.NONE : Intent.DANGER}
+                        placeholder="Pybricks Hub"
+                        rightElement={
+                            isHubNameValid ? undefined : (
+                                <Icon
+                                    icon={<Error />}
+                                    intent={Intent.DANGER}
+                                    tagName="div"
+                                />
+                            )
+                        }
+                    />
+                </ControlGroup>
             </FormGroup>
-            <FormGroup
-                label={i18n.translate('optionsPanel.color2.label')}
-                className="pb-color-picker-form-group pb-color-picker-label-normal"
-            >
-                <div className="pb-color-picker-row">
-                    {ColorOptionsArray.map((color) => {
-                        const isSelected = selectedColor2 === color;
-                        const colorHsv = AppColors[color];
-                        const colorHsl = hsvToHsl(colorHsv.h, colorHsv.s, colorHsv.v);
-                        return (
-                            <Button
-                                key={`row2-${color}`}
-                                className={classNames('pb-color-button', {
-                                    'pb-color-selected': isSelected,
-                                })}
-                                onClick={() => handleColor2Select(color)}
-                                aria-label={`Select ${getColorDisplayName(
-                                    color,
-                                )} for Color 2`}
-                                minimal={true}
-                                text=""
-                                style={{
-                                    backgroundColor: `hsl(${colorHsl.h}, ${colorHsl.s}%, ${colorHsl.l}%)`,
-                                }}
-                                title={getColorDisplayName(color)}
-                            />
-                        );
-                    })}
-                </div>
-            </FormGroup>
-            {/* You can uncomment this InputGroup if you need to see the generated hub name for debugging */}
-            {/* <InputGroup
-                readOnly
-                value={hubName}
-                style={{ marginTop: '10px' }}
-                aria-label="Generated Hub Name"
-            /> */}
         </div>
     );
 };
@@ -506,17 +393,7 @@ export const InstallPybricksDialog: React.FunctionComponent = () => {
             s.firmware.isFirmwareRestoreOfficialDfuInProgress,
     );
     const dispatch = useDispatch();
-    // Initialize with the first color pair (e.g., white/white)
-    const defaultColor1 = ColorOptionsArray[0];
-    const defaultColor2 = ColorOptionsArray[0];
-    const initialHubName = `Hub ${defaultColor1}/${defaultColor2}`;
-    const [hubName, setHubName] = useState(initialHubName);
-    const [selectedColor1, setSelectedColor1] = useState<AppColorName | undefined>(
-        defaultColor1,
-    );
-    const [selectedColor2, setSelectedColor2] = useState<AppColorName | undefined>(
-        defaultColor2,
-    );
+    const [hubName, setHubName] = useState('');
     const [licenseAccepted, setLicenseAccepted] = useState(false);
     const [hubType] = useHubPickerSelectedHub();
     const { firmwareData, firmwareError } = useFirmware(hubType);
@@ -605,10 +482,6 @@ export const InstallPybricksDialog: React.FunctionComponent = () => {
                                 : firmwareData?.metadata
                         }
                         onChangeHubName={setHubName}
-                        selectedColor1={selectedColor1}
-                        onChangeColor1={setSelectedColor1}
-                        selectedColor2={selectedColor2}
-                        onChangeColor2={setSelectedColor2}
                     />
                 }
                 // Removed custom nextButtonProps from here to restore default navigation

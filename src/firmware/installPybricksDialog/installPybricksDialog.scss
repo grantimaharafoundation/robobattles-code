@@ -2,14 +2,13 @@
 // Copyright (c) 2022 The Pybricks Authors
 
 @use '@blueprintjs/core/lib/scss/variables' as bp;
-@use '../../variables' as pb; // Added this line, was missing from original read but present in my first attempt
 
 .pb-firmware-installPybricksDialog {
     &-body {
         min-height: bp.$pt-grid-size * 40;
         display: flex;
         flex-direction: column;
-        align-items: center;
+        align-items: flex-start;
         gap: bp.$pt-grid-size;
     }
 
@@ -41,77 +40,6 @@
 
         &-checkbox {
             margin-top: auto;
-        }
-    }
-}
-
-// Styles for the color picker
-.pb-color-picker-row {
-    display: flex;
-    flex-direction: row;
-    gap: 8px;
-    margin-bottom: bp.$pt-grid-size;
-    justify-content: center; // Center the color buttons in the row
-}
-
-.pb-color-button {
-    padding: 0 !important;
-    min-width: 30px !important;
-    min-height: 30px !important;
-    width: 30px;
-    height: 30px;
-    border: 2px solid #c8c8c8; // Default border for the button itself
-    box-sizing: border-box;
-
-    // Remove styling for the inner button content as it's no longer used for the swatch
-    .#{bp.$ns}-button-content {
-        padding: 0 !important;
-        line-height: 0;
-    }
-
-    &.pb-color-selected {
-        border: 3px solid #009cff; // Thicker border for selection
-        // The inline background style will provide the color
-    }
-}
-
-// .pb-color-swatch is no longer needed as a separate element
-
-.pb-color-picker-form-group {
-    & > .#{bp.$ns}-label {
-        text-align: left; // Align label text to the left
-        width: 100%;
-    }
-
-    // New class to make FormGroup labels normal weight
-    &.pb-color-picker-label-normal {
-        & > .#{bp.$ns}-label {
-            font-weight: normal;
-        }
-    }
-}
-
-.pb-select-hub-light-color-label {
-    margin-top: bp.$pt-grid-size * 2; // Add margin above this label
-    margin-bottom: bp.$pt-grid-size; // Add some space below it before the next FormGroup
-    text-align: center; // Center the text
-    width: 100%; // Ensure it takes full width for centering
-}
-
-// Styles to hide non-Technic hubs and the "other hubs" button
-.pb-firmware-installPybricksDialog-body {
-    .pb-hub-picker {
-        // Hide all radio button labels by default.
-        // Blueprint's Radio component renders as a <label class="bpX-control bpX-radio">.
-        > .#{bp.$ns}-control.#{bp.$ns}-radio {
-            display: none !important;
-        }
-
-        // Show the Technic (3rd) and Prime (4th) Hubs. This relies on the fixed
-        // order of Radio components in HubPicker.tsx.
-        > .#{bp.$ns}-control.#{bp.$ns}-radio:nth-child(3),
-        > .#{bp.$ns}-control.#{bp.$ns}-radio:nth-child(4) {
-            display: block !important; // Default display for .bpX-control is block.
         }
     }
 }
