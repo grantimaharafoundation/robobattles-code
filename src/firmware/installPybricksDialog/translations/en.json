@@ -37,10 +37,14 @@
     "optionsPanel": {
         "title": "Configure options",
         "hubName": {
-            "label": "Hub name",
-            "labelInfo": "(optional)",
+            "label": "Hub number",
+            "labelInfo": "",
             "help": "Choose a Bluetooth name for your hub. If you have more than one hub, this makes it easy to tell them apart when you connect.",
-            "error": "The name is too long."
+            "error": "The name is too long.",
+            "blurbTitle": "Do you have multiple hubs? If so:",
+            "blurbStep1": "Enter a unique number for this hub. Label the hub and controller with the number.",
+            "blurbStep2": "Write the number on a label. Put the label on this hub.",
+            "blurbStep3": "Put a matching label on the controller you'll use with this hub."
         }
     },
     "bootloaderPanel": {

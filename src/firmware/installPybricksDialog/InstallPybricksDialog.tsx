@@ -48,6 +48,8 @@ import { FirmwareData, useCustomFirmware, useFirmware } from './hooks';
 import { useI18n } from './i18n';
 import { validateHubName } from '.';
 
+const defaultHubNumber = '1';
+
 const dialogBody = classNames(
     Classes.DIALOG_BODY,
     Classes.RUNNING_TEXT,
@@ -332,12 +334,18 @@ const ConfigureOptionsPanel: React.FunctionComponent<SelectOptionsPanelProps> = 
             >
                 <ControlGroup>
                     <InputGroup
+                        type="text"
                         value={hubName}
-                        onChange={(e) => onChangeHubName(e.currentTarget.value)}
+                        onChange={(e) => {
+                            const value = e.currentTarget.value;
+                            if (/^\d*$/.test(value) && value.length <= 3) {
+                                onChangeHubName(value);
+                            }
+                        }}
                         onMouseOver={(e) => e.preventDefault()}
                         onMouseDown={(e) => e.stopPropagation()}
                         intent={isHubNameValid ? Intent.NONE : Intent.DANGER}
-                        placeholder="Pybricks Hub"
+                        placeholder={defaultHubNumber}
                         rightElement={
                             isHubNameValid ? undefined : (
                                 <Icon
@@ -349,6 +357,14 @@ const ConfigureOptionsPanel: React.FunctionComponent<SelectOptionsPanelProps> = 
                         }
                     />
                 </ControlGroup>
+                <div className="pb-firmware-installPybricksDialog-options-blurb">
+                    <strong>{i18n.translate('optionsPanel.hubName.blurbTitle')}</strong>
+                    <ol>
+                        <li>{i18n.translate('optionsPanel.hubName.blurbStep1')}</li>
+                        <li>{i18n.translate('optionsPanel.hubName.blurbStep2')}</li>
+                        <li>{i18n.translate('optionsPanel.hubName.blurbStep3')}</li>
+                    </ol>
+                </div>
             </FormGroup>
         </div>
     );
@@ -381,7 +397,7 @@ export const InstallPybricksDialog: React.FunctionComponent = () => {
             s.firmware.isFirmwareRestoreOfficialDfuInProgress,
     );
     const dispatch = useDispatch();
-    const [hubName, setHubName] = useState('');
+    const [hubName, setHubName] = useState(defaultHubNumber);
     const [licenseAccepted, setLicenseAccepted] = useState(false);
     const [hubType] = useHubPickerSelectedHub();
     const { firmwareData, firmwareError } = useFirmware(hubType);
@@ -423,7 +439,7 @@ export const InstallPybricksDialog: React.FunctionComponent = () => {
                         firmwareInstallPybricksDialogAccept(
                             hubBootloaderType(selectedHubType),
                             selectedFirmwareData?.firmwareZip ?? new ArrayBuffer(0),
-                            hubName,
+                            `Hub ${hubName || defaultHubNumber}`,
                         ),
                     ),
             }}

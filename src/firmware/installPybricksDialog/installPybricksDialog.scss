@@ -42,4 +42,12 @@
             margin-top: auto;
         }
     }
+
+    &-options {
+        &-blurb {
+            margin-top: bp.$pt-grid-size !important;
+            font-style: italic;
+            opacity: 0.8;
+        }
+    }
 }
