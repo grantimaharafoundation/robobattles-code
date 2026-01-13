@@ -51,7 +51,7 @@ it('should dispatch when done is clicked', async () => {
         firmwareInstallPybricksDialogAccept(
             'ble-lwp3-bootloader',
             new ArrayBuffer(0),
-            '',
+            'Hub 1',
         ),
     );
 });
