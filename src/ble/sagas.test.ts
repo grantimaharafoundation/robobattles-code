@@ -77,7 +77,7 @@ function createMocks(): Mocks {
                     .file(
                         'firmware.metadata.json',
                         JSON.stringify({
-                            'firmware-version': '3.2.0b2',
+                            'firmware-version': '14.0.0',
                         }),
                     )
                     .generateAsync({ type: 'blob' }),
@@ -86,7 +86,7 @@ function createMocks(): Mocks {
 
     const firmwareRevisionChar = mock<BluetoothRemoteGATTCharacteristic>();
     firmwareRevisionChar.readValue.mockResolvedValue(
-        new DataView(encoder.encode('3.2.0b2').buffer),
+        new DataView(encoder.encode('14.0.0').buffer),
     );
 
     const softwareRevisionChar = mock<BluetoothRemoteGATTCharacteristic>();
@@ -243,7 +243,7 @@ async function runConnectUntil(saga: AsyncSaga, point: ConnectRunPoint): Promise
         }
 
         await expect(saga.take()).resolves.toEqual(
-            bleDIServiceDidReceiveFirmwareRevision('3.2.0b2'),
+            bleDIServiceDidReceiveFirmwareRevision('14.0.0'),
         );
 
         if (point === ConnectRunPoint.DidReceiveFirmwareRevision) {
@@ -267,7 +267,7 @@ async function runConnectUntil(saga: AsyncSaga, point: ConnectRunPoint): Promise
         }
 
         await expect(saga.take()).resolves.toEqual(
-            blePybricksServiceDidNotReceiveHubCapabilities(defaultPnpId, '3.2.0b2'),
+            blePybricksServiceDidNotReceiveHubCapabilities(defaultPnpId, '14.0.0'),
         );
 
         if (point === ConnectRunPoint.DidNotReceiveHubCapabilities) {
