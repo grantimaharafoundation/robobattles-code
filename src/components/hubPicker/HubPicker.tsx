@@ -30,18 +30,6 @@ export const HubPicker: React.FunctionComponent<HubPickerProps> = ({ disabled })
             disabled={disabled}
             onChange={(e) => setSelectedHub(e.currentTarget.value as Hub)}
         >
-            <Radio value={Hub.Move}>
-                <HubIcon
-                    url={new URL('@pybricks/images/hub-move.png', import.meta.url)}
-                    label="BOOST Move Hub"
-                />
-            </Radio>
-            <Radio value={Hub.City}>
-                <HubIcon
-                    url={new URL('@pybricks/images/hub-city.png', import.meta.url)}
-                    label="City Hub"
-                />
-            </Radio>
             <Radio value={Hub.Technic}>
                 <HubIcon
                     url={new URL('@pybricks/images/hub-technic.png', import.meta.url)}
@@ -52,18 +40,6 @@ export const HubPicker: React.FunctionComponent<HubPickerProps> = ({ disabled })
                 <HubIcon
                     url={new URL('@pybricks/images/hub-prime.png', import.meta.url)}
                     label="SPIKE Prime Hub"
-                />
-            </Radio>
-            <Radio value={Hub.Essential}>
-                <HubIcon
-                    url={new URL('@pybricks/images/hub-essential.png', import.meta.url)}
-                    label="SPIKE Essential Hub"
-                />
-            </Radio>
-            <Radio value={Hub.Inventor}>
-                <HubIcon
-                    url={new URL('@pybricks/images/hub-inventor.png', import.meta.url)}
-                    label="MINDSTORMS Robot Inventor Hub"
                 />
             </Radio>
         </RadioGroup>
