@@ -168,14 +168,12 @@ type SelectHubPanelProps = {
     isCustomFirmwareRequested: boolean;
     customFirmwareData: FirmwareData | undefined;
     onCustomFirmwareZip: (firmwareZip: File | undefined) => void;
-    initialHubTypeForPicker?: Hub;
 };
 
 const SelectHubPanel: React.FunctionComponent<SelectHubPanelProps> = ({
     isCustomFirmwareRequested,
     customFirmwareData,
     onCustomFirmwareZip,
-    initialHubTypeForPicker,
 }) => {
     const [isAdvancedOpen, setIsAdvancedOpen] = useLocalStorage(
         'installPybricksDialog.isAdvancedOpen',
@@ -273,7 +271,7 @@ const SelectHubPanel: React.FunctionComponent<SelectHubPanelProps> = ({
             ) : (
                 <>
                     <p>{i18n.translate('selectHubPanel.message')}</p>
-                    <HubPicker initialSelectedHub={initialHubTypeForPicker} />
+                    <HubPicker />
                     <Popover
                         popoverClassName={Classes.POPOVER_CONTENT_SIZING}
                         placement="right-end"
@@ -573,7 +571,6 @@ export const InstallPybricksDialog: React.FunctionComponent = () => {
                         isCustomFirmwareRequested={isCustomFirmwareRequested}
                         customFirmwareData={customFirmwareData}
                         onCustomFirmwareZip={setCustomFirmwareZip}
-                        initialHubTypeForPicker={hubType} // Pass Hub.Technic here
                     />
                 }
             />

@@ -32,27 +32,19 @@ type Action =
     | { type: 'fetched'; payload: FirmwareData }
     | { type: 'error'; payload: Error };
 
-// Maps Hub enum to the expected starting part of the filename in /public/firmware/
-const hubFirmwareFileIdentifierMap = new Map<Hub, string>([
-    [Hub.Move, 'movehub'],
-    [Hub.City, 'cityhub'],
-    [Hub.Technic, 'technichub'],
-    [Hub.Prime, 'primehub'],
-    [Hub.Essential, 'essentialhub'],
-    [Hub.Inventor, 'primehub'],
+const firmwareZipMap = new Map<Hub, string>([
+    [Hub.Technic, `/firmware/technichub.zip`],
+    [Hub.Prime, `/firmware/primehub.zip`],
+    [Hub.Inventor, `/firmware/primehub.zip`],
 ]);
 
 /**
- * Gets Pybricks firmware .zip file for the specified hub type from the /public/firmware/ directory.
+ * Gets Pybricks firmware .zip file for the specified hub type.
  * @param hubType The hub type.
  * @returns The current state.
  */
 export function useFirmware(hubType: Hub): State {
-    const fileIdentifier = hubFirmwareFileIdentifierMap.get(hubType);
-    const url = fileIdentifier
-        ? `/firmware/pybricks-${fileIdentifier}-v13.0.2.zip`
-        : undefined;
-
+    const url = firmwareZipMap.get(hubType);
     const cache = useRef<Cache>({});
     const isMounted = useIsMounted();
 
