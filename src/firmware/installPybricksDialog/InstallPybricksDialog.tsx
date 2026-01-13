@@ -60,16 +60,10 @@ function getHubTypeFromMetadata(
     fallback: Hub,
 ): Hub {
     switch (metadata?.['device-id']) {
-        case HubType.MoveHub:
-            return Hub.Move;
-        case HubType.CityHub:
-            return Hub.City;
         case HubType.TechnicHub:
             return Hub.Technic;
         case HubType.PrimeHub:
             return Hub.Prime;
-        case HubType.EssentialHub:
-            return Hub.Essential;
         default:
             return fallback;
     }
@@ -77,16 +71,10 @@ function getHubTypeFromMetadata(
 
 function getHubTypeNameFromMetadata(metadata: FirmwareMetadata | undefined): string {
     switch (metadata?.['device-id']) {
-        case HubType.MoveHub:
-            return 'BOOST Move Hub';
-        case HubType.CityHub:
-            return 'City Hub';
         case HubType.TechnicHub:
             return 'Technic Hub';
         case HubType.PrimeHub:
             return 'SPIKE Prime/MINDSTORMS Robot Inventor hub';
-        case HubType.EssentialHub:
-            return 'SPIKE Essential hub';
         default:
             return '?';
     }

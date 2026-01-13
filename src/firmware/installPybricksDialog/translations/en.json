@@ -8,7 +8,7 @@
             "info": {
                 "mindstorms": {
                     "title": "RoboBattles Firmware",
-                    "intro": "RoboBattles does not currently offer firmware for other LEGO® hubs. Support for the Large Spike™ Prime hub may be available in the future."
+                    "intro": "RoboBattles does not currently offer firmware for other LEGO® hubs."
                 }
             }
         },
