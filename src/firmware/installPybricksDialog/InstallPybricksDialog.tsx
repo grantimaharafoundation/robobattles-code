@@ -359,11 +359,7 @@ const ConfigureOptionsPanel: React.FunctionComponent<SelectOptionsPanelProps> = 
                 </ControlGroup>
                 <div className="pb-firmware-installPybricksDialog-options-blurb">
                     <strong>{i18n.translate('optionsPanel.hubName.blurbTitle')}</strong>
-                    <ol>
-                        <li>{i18n.translate('optionsPanel.hubName.blurbStep1')}</li>
-                        <li>{i18n.translate('optionsPanel.hubName.blurbStep2')}</li>
-                        <li>{i18n.translate('optionsPanel.hubName.blurbStep3')}</li>
-                    </ol>
+                    {i18n.translate('optionsPanel.hubName.blurb')}
                 </div>
             </FormGroup>
         </div>
