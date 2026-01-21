@@ -208,10 +208,13 @@ const BootloaderInstructions: React.FunctionComponent<BootloaderInstructionsProp
                 >
                     {i18n.translate('instructionGroup.bootloaderMode.holdButton', {
                         button,
-                        boldDoNotLetGo: (
-                            <strong>Do not let go until we tell you.</strong>
-                        ),
                     })}
+
+                    <strong>
+                        {i18n.translate(
+                            'instructionGroup.bootloaderMode.holdButtonBold',
+                        )}
+                    </strong>
                 </li>
 
                 {/* not strictly necessary, but order is swapped in the video,

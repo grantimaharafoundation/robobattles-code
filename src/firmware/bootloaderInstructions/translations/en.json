@@ -10,7 +10,7 @@
         }
     },
     "button": {
-        "bluetooth": "Bluetooth button",
+        "bluetooth": "Bluetooth button (ᛒ)",
         "power": "button"
     },
     "light": {
@@ -24,7 +24,7 @@
     "instructionGroup": {
         "prepare": {
             "title": "Prepare:",
-            "batteries": "Make sure the hub has new or fully-charged batteries.",
+            "batteries": "Make sure the hub has working batteries.",
             "turnOff": "Make sure the hub is turned off.",
             "usb": "Disconnect the USB cable.",
             "app": "Open the {lego} PoweredUp app in 'Create' mode and start a new project."
@@ -32,7 +32,8 @@
         "bootloaderMode": {
             "title": "Install:",
             "disconnectIo": "Disconnect any device from port A on the hub.",
-            "holdButton": "Press and hold the {button} on the hub. {boldDoNotLetGo}",
+            "holdButton": "Press and hold the {button} on the hub.",
+            "holdButtonBold": " Do not let go until we tell you.",
             "connectUsb": "Connect the USB cable.",
             "waitForLight": "The {light} will start blinking {lightPattern}.",
             "waitAppConnect": "The app will automatically connect and start restoring the firmware.",
