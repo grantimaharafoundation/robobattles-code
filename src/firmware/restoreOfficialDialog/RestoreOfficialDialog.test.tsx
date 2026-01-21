@@ -39,7 +39,10 @@ describe('closing', () => {
 });
 
 describe('flashing', () => {
-    it.each([['SPIKE Prime Hub', Hub.Prime]])(
+    it.each([
+        ['SPIKE Prime Hub', Hub.Prime],
+        ['MINDSTORMS Robot Inventor Hub', Hub.Inventor],
+    ])(
         'should flash %s when flash button is clicked',
         async (hubName: string, hub: Hub) => {
             const [user, dialog, dispatch] = testRender(<RestoreOfficialDialog />, {

@@ -42,6 +42,12 @@ export const HubPicker: React.FunctionComponent<HubPickerProps> = ({ disabled })
                     label="SPIKE Prime Hub"
                 />
             </Radio>
+            <Radio value={Hub.Inventor}>
+                <HubIcon
+                    url={new URL('@pybricks/images/hub-inventor.png', import.meta.url)}
+                    label="MINDSTORMS Robot Inventor Hub"
+                />
+            </Radio>
         </RadioGroup>
     );
 };
